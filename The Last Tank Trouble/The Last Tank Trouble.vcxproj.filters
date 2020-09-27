@@ -1,0 +1,180 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\UI">
+      <UniqueIdentifier>{c5838002-094a-4561-805d-179f71fcbc69}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\UI">
+      <UniqueIdentifier>{b98f06b7-327f-43f9-adab-e7fa854e5edd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\States">
+      <UniqueIdentifier>{358154d6-c859-4b85-bed1-d197d457e1f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\States">
+      <UniqueIdentifier>{ef558bd2-8162-4b57-9996-4a9aebef41b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Game">
+      <UniqueIdentifier>{8dd8f857-2ce7-437d-b189-8062043752cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Game">
+      <UniqueIdentifier>{05742485-42be-4b74-b115-fa85eaf3c475}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Game\PowerUps">
+      <UniqueIdentifier>{1a83f8b3-2419-434b-9a3b-18fa2e1e9d77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Game\PowerUps">
+      <UniqueIdentifier>{791d72df-e46e-405f-86a5-4223b2a0cf74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Rescources">
+      <UniqueIdentifier>{dd42e467-110c-42f8-9035-bd5654438985}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Resources">
+      <UniqueIdentifier>{5a6a17a6-2268-41c3-8bef-387f10521af1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Game\MultiPlayer">
+      <UniqueIdentifier>{8dc9dea7-8c75-4e9b-bdff-a7a8c3f6695b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Game\MultiPlayer">
+      <UniqueIdentifier>{37610715-0875-4606-92ca-6a1b3701be1f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Button.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\Center.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="States\StateManager.cpp">
+      <Filter>Source Files\States</Filter>
+    </ClCompile>
+    <ClCompile Include="States\MainMenu.cpp">
+      <Filter>Source Files\States</Filter>
+    </ClCompile>
+    <ClCompile Include="States\Options.cpp">
+      <Filter>Source Files\States</Filter>
+    </ClCompile>
+    <ClCompile Include="States\MultiPlayerMenu.cpp">
+      <Filter>Source Files\States</Filter>
+    </ClCompile>
+    <ClCompile Include="States\SinglePlayer.cpp">
+      <Filter>Source Files\States</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Map.cpp">
+      <Filter>Source Files\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Player.cpp">
+      <Filter>Source Files\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Bullet.cpp">
+      <Filter>Source Files\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Animation.cpp">
+      <Filter>Source Files\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Score.cpp">
+      <Filter>Source Files\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\PowerUps\Icons.cpp">
+      <Filter>Source Files\Game\PowerUps</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\PowerUps\BulletSpeedPowerUp.cpp">
+      <Filter>Source Files\Game\PowerUps</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\PowerUps\SpeedPowerUp.cpp">
+      <Filter>Source Files\Game\PowerUps</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\PowerUps\BulletSizeIncrease.cpp">
+      <Filter>Source Files\Game\PowerUps</Filter>
+    </ClCompile>
+    <ClCompile Include="Resources\ResourceManagement.cpp">
+      <Filter>Source Files\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\MultiPlayer\MultiPlayer.cpp">
+      <Filter>Source Files\Game\MultiPlayer</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\MultiPlayer\MultiPlayerGame.cpp">
+      <Filter>Source Files\Game\MultiPlayer</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Window.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Button.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Center.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="States\MainMenu.h">
+      <Filter>Header Files\States</Filter>
+    </ClInclude>
+    <ClInclude Include="States\Options.h">
+      <Filter>Header Files\States</Filter>
+    </ClInclude>
+    <ClInclude Include="States\StateManager.h">
+      <Filter>Header Files\States</Filter>
+    </ClInclude>
+    <ClInclude Include="States\MultiPlayerMenu.h">
+      <Filter>Header Files\States</Filter>
+    </ClInclude>
+    <ClInclude Include="States\SinglePlayer.h">
+      <Filter>Header Files\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Map.h">
+      <Filter>Header Files\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Player.h">
+      <Filter>Header Files\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Bullet.h">
+      <Filter>Header Files\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Animation.h">
+      <Filter>Header Files\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Explosion.h">
+      <Filter>Header Files\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Score.h">
+      <Filter>Header Files\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\PowerUps\Icons.h">
+      <Filter>Header Files\Game\PowerUps</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\PowerUps\SpeedPowerUp.h">
+      <Filter>Header Files\Game\PowerUps</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\PowerUps\BulletSpeedPowerUp.h">
+      <Filter>Header Files\Game\PowerUps</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\PowerUps\BulletSizeIncrease.h">
+      <Filter>Header Files\Game\PowerUps</Filter>
+    </ClInclude>
+    <ClInclude Include="Resources\ResourceManagement.h">
+      <Filter>Header Files\Rescources</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\MultiPlayer\MultiPlayer.h">
+      <Filter>Header Files\Game\MultiPlayer</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\MultiPlayer\MultiPlayerGame.h">
+      <Filter>Header Files\Game\MultiPlayer</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
