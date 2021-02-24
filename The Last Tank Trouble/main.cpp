@@ -12,18 +12,21 @@ int main()
 	//window.setFramerateLimit(10);
     window.setVerticalSyncEnabled(true);
 
-	StateManager manager;
-	manager.setup(window);
+	//StateManager manager;
+	//manager.setup(window);
 
 	std::cout << sf::IpAddress::getLocalAddress().toString();
 	
 
 	while (window.isOpen())
 	{
+
+		std::cout << sf::IpAddress::getLocalAddress().toString();
+
 		sf::Event event;
 		while (window.pollEvent(event))
 		{
-			manager.handleEvents(event, window);
+		//	manager.handleEvents(event, window);
 
 			if (event.type == sf::Event::Closed)
 				window.close();
@@ -43,8 +46,8 @@ int main()
 		//window.clear(sf::Color::White);
 
 
-		manager.update(window);
-		manager.Compose(window);
+		//manager.update(window);
+		//manager.Compose(window);
 
 		window.display();
 	}
