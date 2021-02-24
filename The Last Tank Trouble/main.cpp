@@ -37,9 +37,9 @@ int main()
 				window.setView(sf::View(visibleArea));
 			}
 		}
-		//window.clear(sf::Color(220,220,220));
+		window.clear(sf::Color(220,220,220));
 		//window.clear(sf::Color::Black);
-		window.clear(sf::Color::White);
+		//window.clear(sf::Color::White);
 
 
 		manager.update(window);

@@ -73,8 +73,8 @@ void Player::Update()
 		explosion();
 		restartFromPlayers();
 		checkIfYouCanShoot();
-	//	intersectsWithIcon();
-	//	createIcon();
+		intersectsWithIcon();
+		createIcon();
 
 
 		

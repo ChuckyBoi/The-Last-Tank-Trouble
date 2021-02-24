@@ -155,6 +155,8 @@ void MultiPlayer::server()
 } 
 void MultiPlayer::client()
 {
+	std::cout << sf::IpAddress::getLocalAddress().toString();
+
 		if (!isConnectedToServer)
 		{
 			socket_.bind(55002);
@@ -857,22 +859,6 @@ void MultiPlayer::draw(sf::RenderTarget& target, sf::RenderStates states) const
 
 	target.draw(player1);
 
-	for (size_t i = 0; i < horizontalWalls.size(); i++)
-	{
-		target.draw(hLefts[i]);
-		target.draw(hRights[i]);
-		target.draw(hDowns[i]);
-		target.draw(hTops[i]);
-
-	}
-	for (size_t i = 0; i < verticalWalls.size(); i++)
-	{
-		target.draw(vLefts[i]);
-		target.draw(vRights[i]);
-		target.draw(vDowns[i]);
-		target.draw(vTops[i]);
-
-	}
 
 	
 	/*

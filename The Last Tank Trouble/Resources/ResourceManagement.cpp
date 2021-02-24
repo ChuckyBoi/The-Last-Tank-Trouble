@@ -10,7 +10,7 @@ ResourceManagement::ResourceManagement()
 	//music.openFromFile("Audio/generals.ogg");
 	LoadTexture("D:/SFML PROGRAM/The Last Tank Trouble/The Last Tank Trouble/Images/Button.png","Button");
 	LoadTexture("D:/SFML PROGRAM/The Last Tank Trouble/The Last Tank Trouble/Images/MM.jpg","MM");
-	LoadTexture("D:/SFML PROGRAM/The Last Tank Trouble/The Last Tank Trouble/Images/MP.jpg","MP");
+	LoadTexture("D:/SFML PROGRAM/The Last Tank Trouble/The Last Tank Trouble/Images/MP1.jpg","MP");
 	LoadTexture("D:/SFML PROGRAM/The Last Tank Trouble/The Last Tank Trouble/Images/OP.jpg","OP");
 
 

@@ -190,6 +190,7 @@ void Map::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	*/
 	
 	
+	/*
 	for (size_t i = 0; i < horizontalWalls.size(); i++)
 	{
 		target.draw(hLefts[i]);
@@ -206,6 +207,7 @@ void Map::draw(sf::RenderTarget& target, sf::RenderStates states) const
 		target.draw(vTops[i]);
 
 	}
+	*/
 	
 	
 	
