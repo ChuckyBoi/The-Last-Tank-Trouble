@@ -133,7 +133,7 @@ void MultiPlayer::server()
 
 		// Send a message to 192.168.1.50 on port 55002
 		std::string message = "Hi, I am " + sf::IpAddress::getLocalAddress().toString();
-		client_.send(message.c_str(), message.size() + 1, "192.168.0.5", 55002);
+		client_.send(message.c_str(), message.size() + 1, "192.168.1.6", 55002);
 
 		// Receive an answer (most likely from 192.168.1.50, but could be anyone else)
 	

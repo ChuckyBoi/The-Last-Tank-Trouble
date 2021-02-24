@@ -72,9 +72,9 @@ void Player::Update()
 		collideWithBullets();
 		explosion();
 		restartFromPlayers();
-		checkIfYouCanShoot();
-		intersectsWithIcon();
-		createIcon();
+	//	checkIfYouCanShoot();
+	//	intersectsWithIcon();
+		//createIcon();
 
 
 		

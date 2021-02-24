@@ -15,6 +15,7 @@ int main()
 	StateManager manager;
 	manager.setup(window);
 
+	std::cout << sf::IpAddress::getLocalAddress().toString();
 	
 
 	while (window.isOpen())
