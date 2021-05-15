@@ -133,7 +133,7 @@ void MultiPlayer::server()
 
 		// Send a message to 192.168.1.50 on port 55002
 		std::string message = "Hi, I am " + sf::IpAddress::getLocalAddress().toString();
-		client_.send(message.c_str(), message.size() + 1, "192.168.1.6", 55002);
+		client_.send(message.c_str(), message.size() + 1, "192.168.0.134", 55002);
 
 		// Receive an answer (most likely from 192.168.1.50, but could be anyone else)
 	
@@ -822,28 +822,7 @@ void MultiPlayer::clientSendCanReset(sf::UdpSocket& socket)
 }
 
 
-void MultiPlayer::ServerThreadReceive()
-{
 
-	std::thread t(&MultiPlayer::serverReceive, &MultiPlayer(), std::ref(client_));
-	t.join();
-}
-void MultiPlayer::ClientThreadSend()
-{
-	std::thread t1(&MultiPlayer::clientSend, &MultiPlayer(), std::ref(socket_));
-	t1.join();
-}
-void MultiPlayer::ClientThreadReceive()
-{
-	std::thread t2(&MultiPlayer::clientReceive, &MultiPlayer(), std::ref(socket_));
-	t2.join();
-}
-void MultiPlayer::ServerThreadSend()
-{
-	std::thread t3(&MultiPlayer::sendCases, &MultiPlayer(), std::ref(client_));
-	t3.join();
-
-}
 
 void MultiPlayer::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {

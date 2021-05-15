@@ -18,7 +18,7 @@ private:
 
 	Map map;
 	Score score;
-	Player players;
+	t players;
 
 public:
 	void setup(sf::RenderWindow& window);

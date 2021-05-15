@@ -8,7 +8,7 @@ class MultiPlayerMenu :public Window
 {
 private:
 
-	bool isActive = true;
+	bool isActive = false;
 
 	sf::Font font;
 	Button BK{ font,"Soon...",sf::Vector2f(300,100) };

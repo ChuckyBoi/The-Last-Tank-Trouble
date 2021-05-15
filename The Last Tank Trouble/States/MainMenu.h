@@ -8,7 +8,7 @@ class MainMenu : public Window
 
 
 private:
-	bool isActive = false;
+	bool isActive = true;
 
 	sf::Font font;
 
