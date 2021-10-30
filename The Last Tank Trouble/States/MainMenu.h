@@ -18,15 +18,13 @@ private:
 	Button EX{ font,"Exit",sf::Vector2f(300,100) };
 
 	sf::Texture buttonT;
-
 	sf::Music music;
-
 	sf::RectangleShape MMS;
 
 
 public:
 
-
+	
 
 	 void setup(sf::RenderWindow &window);
 	 void handleEvents(const sf::Event& event, sf::RenderWindow& window);
@@ -36,19 +34,19 @@ public:
 	 MainMenu()
 	 {
 		 font.loadFromFile("Fonts/crackman front.ttf");
-		 buttonT.loadFromFile("Images/Button.png");
-		 music.openFromFile("Audio/generals.ogg");
+		// buttonT.loadFromFile("Images/Button.png");
+		// music.openFromFile("Audio/generals.ogg");
 
 		 MMS.setTexture(ResourceManagement::GetInstance()->RequestedTexture("MM"));
 		 MMS.setSize(sf::Vector2f(MMS.getTextureRect().width, MMS.getTextureRect().height));
 
-	
-		 SP.setTexture(buttonT);
-		 MP.setTexture(buttonT);
-		 OP.setTexture(buttonT);
-		 EX.setTexture(buttonT);
 
+		SP.setTexture(*ResourceManagement::GetInstance()->RequestedTexture("Button"));
+		MP.setTexture(*ResourceManagement::GetInstance()->RequestedTexture("Button"));
+		OP.setTexture(*ResourceManagement::GetInstance()->RequestedTexture("Button"));
+		EX.setTexture(*ResourceManagement::GetInstance()->RequestedTexture("Button"));
 
+		
 
 	 }
 

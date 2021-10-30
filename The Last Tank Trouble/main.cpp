@@ -11,16 +11,16 @@ int main()
 	//sf::RenderWindow window(sf::VideoMode(1920, 1080), "Last Man Standing");
 	//window.setFramerateLimit(10);
     window.setVerticalSyncEnabled(true);
+	std::cout << "work goddamit " << std::endl;
 
 	StateManager manager;
 	manager.setup(window);
 
-	
-	
+	std::cout << "work goddamit " << std::endl;
 
 	while (window.isOpen())
 	{
-
+		
 		
 
 		sf::Event event;
@@ -55,9 +55,7 @@ int main()
 }
 
 
-
 /*
-
 
 const unsigned short PORT = 5000;
 const std::string IPADDRESS("192.168.0.5");//change to suit your needs
@@ -149,7 +147,7 @@ int main()
 	}
 
 }
-*/
+
 //const unsigned short PORT = 5000;
 /*
 const std::string IPADDRESS("192.168.0.5");//change to suit your needs

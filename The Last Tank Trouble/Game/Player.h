@@ -24,6 +24,9 @@ protected:
 	int playerNum=0;
 	bool canRestart = false;
 
+	int Default_speed = 1;
+	int Default_BulletSpeed = 3;
+
 	struct Tanks
 	{
 		sf::Clock clock;
@@ -37,9 +40,11 @@ protected:
 		std::vector<sf::Vector2f> Directions;
 		sf::CircleShape circleForBulletCreation;
 
-		int speed = 3;
-		float bulletSpeed = 4;
-		float rotation = 4;
+		int speed = 1;
+		int numOfBullets = 5;
+		int speedOfShooting = 500;
+		float bulletSpeed = 3;
+		float rotation = 2;
 
 		int shootTimer = 0;
 		bool canShootV = true;

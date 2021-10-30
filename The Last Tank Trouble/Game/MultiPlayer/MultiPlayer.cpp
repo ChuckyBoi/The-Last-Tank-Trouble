@@ -1,6 +1,7 @@
 #include "MultiPlayer.h"
 
 
+
 //const std::string IPADDRESS("192.168.0.5");//change to suit your needs
 
 
@@ -35,14 +36,24 @@ sf::Packet& operator>>(sf::Packet& packet, shape& test) {
 
 
 
+
+
+
+
 void MultiPlayer::setup(sf::RenderWindow& window)
 {
-
+	
 	map.setup(window);
 	set_map(map);
+
+
+
 	player1.set_map(map);
-	player1.setup(window); 
+	player1.setup(window,clients); 
+
 	
+	
+
 	horizontalWall = map.getHorizontalWall();
 	verticalWall = map.getVerticalWall();
 
@@ -67,9 +78,210 @@ void MultiPlayer::setup(sf::RenderWindow& window)
 	vTops = map.getvTops();
 
 	
-	
 
 	
+}
+
+
+void MultiPlayer::make_foo_func_thread()
+{
+
+	t = std::thread(&MultiPlayer::listen,this);
+	t.detach();
+}
+
+void MultiPlayer::make_c_func_thread()
+{
+	c = std::thread(&MultiPlayer::client, this);
+	c.detach();
+}
+
+void MultiPlayer::make_sending(sf::UdpSocket& client)
+{
+	Ssend = std::thread (&MultiPlayer::sendCases,this,std::ref(client));
+	std::cout << "make_SENDING" << std::endl;
+	Ssend.detach();
+}
+void MultiPlayer::make_receiving(sf::UdpSocket& client)
+{
+	Sreceive = std::thread(&MultiPlayer::serverReceive,this,std::ref(client));
+	std::cout << "make_receiving" << std::endl;
+	Sreceive.detach();
+}
+
+void MultiPlayer::Make_clientSend(sf::UdpSocket& socket)
+{
+	Csend = std::thread(&MultiPlayer::clientSend, this, std::ref(socket));
+	std::cout << "make_sending" << std::endl;
+	Csend.detach();
+}
+
+void MultiPlayer::Make_clientReceive(sf::UdpSocket& socket)
+{
+	Creceive = std::thread(&MultiPlayer::clientReceive, this, std::ref(socket));
+	std::cout << "make_receiving" << std::endl;
+	Creceive.detach();
+}
+
+
+
+void MultiPlayer::listen()
+{
+	std::cout << "listen" << std::endl;
+
+	if(client_.bind(55002) == sf::Socket::Done)
+	{
+
+	}
+	else
+	{
+		std::cout << "Server IS BIND  " << port << ", waiting for a connection... " << std::endl;
+	}
+
+	selector.add(client_);
+	
+	
+	while (true)
+	{
+		//std::cout << "before wait\n";
+		if (selector.wait(sf::milliseconds(10.f)))
+		{
+			if (selector.isReady(client_))
+			{
+			    if (client_.receive(buffer, sizeof(buffer), received, sender, port) == sf::Socket::Done) {
+
+					std::cout << "Message received from client " << sender << ": \"" << buffer << "\"" << std::endl;
+				}
+
+				if (client_.send("9", sizeof(buffer), sender, port) != sf::Socket::Done)
+				{
+					std::cout << "clinet cant send";
+				}
+				sf::UdpSocket* client = new sf::UdpSocket;
+
+				if (client_.bind(55002) == sf::Socket::Done)
+				{
+
+					//make_sending(*client);
+					//make_receiving(*client);
+
+					sentMapsToAll = false;
+					sentClientID = false;
+					sentNrOfPlayers = false;
+
+					//sendCases(*client);
+					//serverReceive(*client);
+
+					clients.push_back(client);
+					std::cout << "clients size :" << clients.size() << std::endl;
+				
+
+					BetaClock.restart();
+
+				
+
+				//	cases = 4; //case so it will the clientid required
+				//	sendCases(*client);
+				  //  serverReceive(*client);
+					//uncommenthing this will make it so clientID gets send
+					if (!sentClientID)
+					{
+						
+						cases = 4;
+						sendCases(*client);
+						serverReceive(*client);
+						clientID++;
+						sentClientID = true;
+						cases = 1;
+					}
+
+				
+					currentNrPlayers = clients.size();
+
+					selector.add(*client);
+
+					sendCases(*client);
+					serverReceive(*client);
+				
+
+				//	make_sending(*client);
+					//make_receiving(*client);
+				}
+				else
+				{
+					std::cout << "delete client" << std::endl;
+					// Error, we won't get a new connection, delete the socket
+					delete client;
+				}
+			}
+
+			else
+			{
+
+				//BetaClock.getElapsedTime().asSeconds();
+
+				if (!sentMapsToAll || !sentClientID || !sentNrOfPlayers)
+				{
+					if (!sentMapsToAll && sentNrOfPlayers) {
+						cases = 1;
+						sentMapsToAll = true;
+					}
+					if (!sentNrOfPlayers && !sentMapsToAll)
+					{
+						cases = 5;
+						sentNrOfPlayers = true;
+					}
+				//	if (BetaClock.getElapsedTime().asSeconds() < 0.1) 
+				//	{
+					//	std::cout << BetaClock.getElapsedTime().asSeconds() << std::endl;
+
+						for (std::list<sf::UdpSocket*>::iterator it = clients.begin(); it != clients.end(); ++it)
+						{
+							sf::UdpSocket& client = **it;
+
+							if (selector.isReady(client))
+							{
+								sendCases(client);
+								serverReceive(client);
+						      
+								
+							   
+							
+							}
+						}
+						
+					//}
+				//	else 
+				//	{
+					//	sentMapsToAll = true;
+				//	}
+
+				}
+				
+				else
+				{
+					for (std::list<sf::UdpSocket*>::iterator it = clients.begin(); it != clients.end(); ++it)
+					{
+						sf::UdpSocket& client = **it;
+
+						if (selector.isReady(client))
+						{
+							sendCases(client);
+							serverReceive(client);
+							cases = 2 ;
+							
+									
+									
+									
+						}
+					}
+
+				}
+				
+			}
+
+		}
+	}
 }
 void MultiPlayer::set_map(Map map)
 {
@@ -85,7 +297,9 @@ void MultiPlayer::handleEvents(const sf::Event& event, sf::RenderWindow& window)
 			if (!keyIsPressed)
 			{
 				setup(window);
+				BetaClock.restart();
 				cases = 1;
+				sentMapsToAll = false;
 				keyIsPressed = true;
 			}
 		}
@@ -94,8 +308,6 @@ void MultiPlayer::handleEvents(const sf::Event& event, sf::RenderWindow& window)
 			keyIsPressed = false;
 
 		}
-
-
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
 		{
 				if (player1.getPlayersBulletSize(0) < 5 && player1.getShootingTimer(0) > 500)
@@ -126,58 +338,42 @@ void MultiPlayer::handleEvents(const sf::Event& event, sf::RenderWindow& window)
 }
 void MultiPlayer::server()
 {
-
-	if (!isConnectedToClient)
-	{
-		client_.bind(55001);
-
-		// Send a message to 192.168.1.50 on port 55002
-		std::string message = "Hi, I am " + sf::IpAddress::getLocalAddress().toString();
-		client_.send(message.c_str(), message.size() + 1, "192.168.0.134", 55002);
-
-		// Receive an answer (most likely from 192.168.1.50, but could be anyone else)
-	
-
-		client_.receive(buffer, sizeof(buffer), received, sender, port);
-		std::cout << sender.toString() << " said: " << buffer << std::endl;
-
-
-		isConnectedToClient = true;
-	
-	}
-	if(isConnectedToClient == true)
-	{
-
-	    sendCases(client_);
-		serverReceive(client_);
-
-	}
+	//listen();
 } 
 void MultiPlayer::client()
 {
-	std::cout << sf::IpAddress::getLocalAddress().toString();
-
 		if (!isConnectedToServer)
 		{
-			socket_.bind(55002);
-			
-			socket_.receive(buffer, sizeof(buffer), received, sender, port);
-			std::cout << sender.toString() << " said: " << buffer << std::endl;
+			std::cout << "Your port:?"<<std::endl;
+			std::cin >> ClientsPort;
 
-			std::string message = "Welcome " + sender.toString();
-			socket_.send(message.c_str(), message.size() + 1, sender, port);
+			// Send a message to 192.168.1.50 on port 55002
+
+			socket_.send("9", sizeof(buffer), "192.168.0.120", 55002);
+
+			// Receive an answer (most likely from 192.168.1.50, but could be anyone else)
+
+			socket_.receive(buffer, sizeof(buffer), received, sender, port);
+			std::cout << "server "<< " said: " << buffer << std::endl;
+
+		
+		
 			isConnectedToServer = true;
-	
 		}
 		if (isConnectedToServer == true)
 		{
 
-			clientReceive(socket_);
-			clientSend(socket_);
+			//Make_clientReceive(socket_);
+			//Make_clientSend(socket_);
+			
+			while (true) {
+				clientReceive(socket_);
+				clientSend(socket_);
+			}
 
-			//ClientThreadReceive();
-		    //ClientThreadSend();
+		
 		}
+		
 }
 void MultiPlayer::update(sf::RenderWindow& window)
 {
@@ -185,69 +381,61 @@ void MultiPlayer::update(sf::RenderWindow& window)
 		if (isServer == true)
 		{
 			
-			player1.setCantRestart();
+			//player1.setCantRestart();
 
-			player1.movePlayer(0);
-			player1.collideWithWalls(0, verticalWalls, horizontalWalls);
-			player1.collideWithBox(0, box);
-			player1.createBullets(0,box ,horizontalWalls, verticalWalls, hLefts, hRights, hTops, hDowns, vLefts, vRights, vTops, vDowns);
+			//player1.movePlayer(0);
+			//player1.collideWithWalls(0, verticalWalls, horizontalWalls);
+			//player1.collideWithBox(0, box);
+			//player1.createBullets(0,box ,horizontalWalls, verticalWalls, hLefts, hRights, hTops, hDowns, vLefts, vRights, vTops, vDowns);
 		
 
-			player1.moveBullet(1, box, horizontalWalls, verticalWalls, hLefts, hRights, hTops, hDowns, vLefts, vRights, vTops, vDowns);
+		//	player1.moveBullet(1, box, horizontalWalls, verticalWalls, hLefts, hRights, hTops, hDowns, vLefts, vRights, vTops, vDowns);
 
 
+		//	player1.collideWithBullets(0);
+			//player1.collisionWithBulletsForOtherPlayer(1);
+		//	player1.explosion(0);
+		//	player1.restartFromPlayers(0);
 
-
-			player1.collideWithBullets(0);
-			player1.collisionWithBulletsForOtherPlayer(1);
-			player1.explosion(0);
-			player1.restartFromPlayers(0);
-
-			if (player1.getCanRestart())
-			{
-				setup(window);
-				cases = 1;
-			}
-			
-
-
-
+			//if (player1.getCanRestart())
+			//{
+			//	setup(window);
+			//	cases = 1;
+			//}
+		
 			server();
-		
-		
-			
-
 		}
 
 
 		if (isClient == true)
 		{
-		
+	
 			
 			player1.setCantRestart();
-			player1.movePlayer(1);
-			player1.collideWithWalls(1, verticalWalls, horizontalWalls);
-			player1.collideWithBox(1, box);
-			player1.createBullets(1,box,horizontalWalls, verticalWalls, hLefts, hRights, hTops, hDowns, vLefts, vRights, vTops, vDowns);
+			player1.movePlayer(clientID);
+			
+			//player1.collideWithWalls(0, verticalWalls, horizontalWalls);
+		//	 player1.collideWithBox(0, box);
+			//player1.createBullets(0,box,horizontalWalls, verticalWalls, hLefts, hRights, hTops, hDowns, vLefts, vRights, vTops, vDowns);
 		
 		
-			player1.moveBullet(0, box, horizontalWalls, verticalWalls, hLefts, hRights, hTops, hDowns, vLefts, vRights, vTops, vDowns);
+		//	player1.moveBullet(0, box, horizontalWalls, verticalWalls, hLefts, hRights, hTops, hDowns, vLefts, vRights, vTops, vDowns);
 			
 
 
 
-
-			player1.collideWithBullets(1);
-			player1.collisionWithBulletsForOtherPlayer(0);
-			player1.explosion(1);
-			player1.restartFromPlayers(1);
+		
+			///player1.collideWithBullets(1);
+			//player1.collisionWithBulletsForOtherPlayer(0);
+			//player1.explosion(1);
+			//player1.restartFromPlayers(1);
 			
 			if(player1.getCanRestart())
 			{
 				casesForThem = 1;
 			}
 
-			client();
+		//	client();
 			
 			
 		
@@ -256,6 +444,7 @@ void MultiPlayer::update(sf::RenderWindow& window)
 }
 void MultiPlayer::sendCases(sf::UdpSocket& client)
 {
+
 	if (cases == 2)
 	{
 		serverMovement(client);
@@ -270,58 +459,76 @@ void MultiPlayer::sendCases(sf::UdpSocket& client)
 		ServerSendBulletLoc(client);
 		cases = 2;
 	}
+	if (cases == 4)
+	{
+		ServerSendClientID(client);
+	//	std::cout << "HOW MANY FUCKING TIMES ARE YOU HERE";
+		cases = 1;
+	}
+	if (cases == 5) 
+	{
+		serverSendNrOfClients(client);
+		cases = 1;
+		std::cout << "hey this is 5 and I sent you " << clients.size() << std::endl;
+	
+	}
 }
 void MultiPlayer::serverReceive(sf::UdpSocket& client)
 {
+	
 
 	sf::Vector2f position;
 	sf::Packet packetReceived;
+	int clientID_;
 
-	 client.receive(packetReceived, sender, port);
-		
+	client.receive(packetReceived, sender, port);
 
-		packetReceived >> casesForThem;
-		if (casesForThem == 1)
+	packetReceived >> casesForThem >> clientID_;
+
+
+
+	if (casesForThem == 1)
+	{
+		cases = 1;
+	}
+	if (casesForThem == 2)
+	{
+		sf::Uint32 posx, posy, rotation;
+		packetReceived >> posx >> posy >> rotation;
+		if ((posx > 10 || posy > 10) && (posx < 2000 || posy < 2000))
 		{
-			cases = 1;
+			player1.playerSetPosition(clientID_, sf::Vector2f(posx, posy));
+			player1.setRotation(clientID_, rotation);
 		}
-		if (casesForThem == 2)
-		{
-			sf::Uint32 posx, posy, rotation;
-			packetReceived >> posx >> posy >> rotation;
-			if ((posx > 10 || posy > 10 ) && (posx < 2000 || posy < 2000))
-			{
-				player1.playerSetPosition(1, sf::Vector2f(posx, posy));
-				player1.setRotation(1, rotation);
+	}
+	if (casesForThem == 3)
+	{
+		float posx, posy;
+		float dirx, diry;
 
+		packetReceived >> posx >> posy >> dirx >> diry;
+		bulletPos.x = posx;
+		bulletPos.y = posy;
+		bulletDir.x = dirx;
+		bulletDir.y = diry;
 
-			}
-		
-		}
-		if (casesForThem == 3)
-		{
+		player1.createBulletsFor(clientID_, bulletPos, bulletDir);
+	}
+	if (casesForThem == 4)
+	{
+		cases = 1;
+	}
+	if (casesForThem == 5)
+	{
+		cases = 1;
+	}
 
-			//std::cout << "NEVER HERE";
-			float posx, posy;
-			float dirx, diry;
-
-			packetReceived >> posx >> posy >> dirx >> diry;
-			bulletPos.x = posx;
-			bulletPos.y = posy;
-			bulletDir.x = dirx;
-			bulletDir.y = diry;
-
-
-			player1.createBulletsFor(1, bulletPos, bulletDir);
-
-
-			//std::cout << "pos is " << posx << " " << posy << std::endl;
-			//std::cout << "dir is " << dirx << " " << diry << std::endl;
-
-		
-		}
-		
-	
+}
+void MultiPlayer::serverSendNrOfClients(sf::UdpSocket& client)
+{
+	sf::Packet PNrOfClients;
+	PNrOfClients << cases  << clients.size();
+	client.send(PNrOfClients, sender, port);
 }
 void MultiPlayer::sendMapAttributes(sf::UdpSocket& client)
 {
@@ -455,15 +662,7 @@ void MultiPlayer::sendMapAttributes(sf::UdpSocket& client)
 		PacketboxInfos << wholeThing.wall;
 	}
 
-	
-	sf::Uint32 posx, posy, rotation;
-	posx = player1.playerGetPosition(1).x;
-	posy = player1.playerGetPosition(1).y;
-	rotation = player1.getRotation(1);
-	
-	PacketboxInfos << posx << posy << rotation;
-
-
+	//WHAT
 	if (client.send(PacketboxInfos, sender, port) != sf::Socket::Done)
 	{
 		std::cout << " Didnt Sent map attributes .\n";
@@ -479,33 +678,38 @@ void MultiPlayer::serverMovement(sf::UdpSocket& client)
 
 	sf::Uint32 posx, posy, rotation;
 	sf::Vector2f position;
-	position = player1.playerGetPosition(0);
-	rotation = player1.getRotation(0);
 
-	/*
-	if ((position.x != previousPos.x ||
-		position.y != previousPos.y) ||
-		rotation != previousRotation)
+	for (int i = 1; i <= clients.size(); i++)
 	{
+		position = player1.playerGetPosition(i);
+		rotation = player1.getRotation(i);
 
-		previousPos.x = player1.playerGetPosition(0).x;
-		previousPos.y = player1.playerGetPosition(0).y;
-		previousRotation = player1.getRotation(0);
+
+		/*
+		if ((position.x != previousPos.x ||
+			position.y != previousPos.y) ||
+			rotation != previousRotation)
+		{
+
+			previousPos.x = player1.playerGetPosition(0).x;
+			previousPos.y = player1.playerGetPosition(0).y;
+			previousRotation = player1.getRotation(0);
+			posx = position.x;
+			posy = position.y;
+
+			sf::Packet Plocation;
+		Plocation << cases << posx << posy << rotation;
+		client_.send(Plocation, copyAddress, copyPort);
+
+
+		}
+		*/
 		posx = position.x;
 		posy = position.y;
-	
 		sf::Packet Plocation;
-	Plocation << cases << posx << posy << rotation;
-	client_.send(Plocation, copyAddress, copyPort);
-
-	
+		Plocation << cases << i << posx << posy << rotation;
+		client.send(Plocation, sender, port);
 	}
-	*/
-	posx = position.x;
-	posy = position.y;
-	sf::Packet Plocation;
-	Plocation << cases << posx << posy << rotation;
-	client_.send(Plocation, sender, port);
 
 }
 void MultiPlayer::ServerSendBulletLoc(sf::UdpSocket& client)
@@ -534,6 +738,21 @@ void MultiPlayer::ServerSendBulletLoc(sf::UdpSocket& client)
 	client.send(Plocation, sender, port);
 
 }
+void MultiPlayer::ServerSendClientID(sf::UdpSocket& client)
+{
+	sf::Packet PclientID;
+	PclientID << cases << clientID;
+	client.send(PclientID, sender, port);
+
+}
+
+
+int MultiPlayer::getClientsSize()
+{
+	return clients.size();
+}
+
+
 
 void MultiPlayer::clientSend(sf::UdpSocket& socket)
 {
@@ -551,6 +770,18 @@ void MultiPlayer::clientSend(sf::UdpSocket& socket)
 		//std::cout << "IT casesForThem WORK " << casesForThem << std::endl;
 		ClientSendBulletLoc(socket);
 		casesForThem = 2;
+	}
+	if (casesForThem == 4)
+	{
+		
+		clientSendReceivedClientID(socket);
+		casesForThem = 1;
+	}
+	if (casesForThem == 5)
+	{
+		
+		clientSendReceivedNrOfPlayers(socket);
+		casesForThem = 1;
 	}
 	
 }
@@ -718,29 +949,37 @@ void MultiPlayer::clientReceive(sf::UdpSocket& socket)
 			vDowns[i].setPosition(sf::Vector2f(wholeThing.wall.x, wholeThing.wall.y));
 		}
 
-		sf::Uint32 posx, posy, rotation;
-		sf::Vector2f position;
-		float rotation_;
-		packetReceived >> posx >> posy >> rotation;
-		position.x = posx;
-		position.y = posy;
-		rotation_ = rotation;
-		player1.playerSetPosition(1, position);
-		player1.setRotation(1, rotation_);
-
+	
 		///casesForThem = 2;
 
+
+		setupOnce = false;
+
+		if (!setupOnce) {
+
+			//player1.setupForClient(clientID);
+			player1.setClientFirstPosition(box,clientID);
+			setupOnce = true;
+		}
 	}
+
 	if (cases == 2) {
 		sf::Uint32 posx, posy, rotation;
-		packetReceived >> posx >> posy >> rotation;
+		int client_ID_;
+		packetReceived >> client_ID_ >> posx >> posy >> rotation;
 
 		//std::cout << "posx is " << posx << " posy is " << posy << std::endl;
 
 	//	if (posx > 10 || posy < 10)
 		//{
-			player1.playerSetPosition(0, sf::Vector2f(posx, posy));
-			player1.setRotation(0, rotation);
+		for (int i = 1; i <= clients.size(); i++) 
+		{
+			if (i != clientID) {
+				//player1.playerSetPosition(client_ID_, sf::Vector2f(posx, posy));
+				//player1.setRotation(client_ID_, rotation);
+
+			}
+		}
 	//	}
 
 	
@@ -764,8 +1003,15 @@ void MultiPlayer::clientReceive(sf::UdpSocket& socket)
 
 		//std::cout << "pos is " << posx << " " << posy << std::endl;
 		//std::cout << "dir is " << dirx << " " << diry << std::endl;
-
-		  
+	}
+	if (cases == 4)
+	{
+		packetReceived >> clientID;
+	}
+	if (cases == 5)
+	{
+		packetReceived  >> currentNrPlayers;
+		std::cout << "cases =5 and I received " << currentNrPlayers << std::endl;
 	}
 }
 void MultiPlayer::clientMovement(sf::UdpSocket& socket)
@@ -773,13 +1019,13 @@ void MultiPlayer::clientMovement(sf::UdpSocket& socket)
 
 	sf::Uint32 posx, posy, rotation;
 	sf::Vector2f position;
-	position = player1.playerGetPosition(1);
-	rotation = player1.getRotation(1);
+	position = player1.playerGetPosition(clientID);
+	rotation = player1.getRotation(clientID);
 	
 	posx = position.x;
 	posy = position.y;
 	sf::Packet Plocation;
-	Plocation << casesForThem << posx << posy << rotation;
+	Plocation << casesForThem << clientID << posx << posy << rotation;
 
 	socket.send(Plocation, sender, port);
 
@@ -791,7 +1037,6 @@ void MultiPlayer::ClientSendBulletLoc(sf::UdpSocket& socket)
 	float Dirx, Diry;
 	sf::Vector2f position;
 	sf::Vector2f Dir;
-
 
 
 	position = player1.playerGetBulletPos(1);
@@ -811,21 +1056,30 @@ void MultiPlayer::ClientSendBulletLoc(sf::UdpSocket& socket)
 	socket.send(Plocation, sender, port);
 
 }
-
 void MultiPlayer::clientSendCanReset(sf::UdpSocket& socket)
 {
 	sf::Packet Plocation;
-	Plocation << casesForThem;
+	Plocation << casesForThem << clientID;
 
 	socket.send(Plocation, sender, port);
 
 }
+void MultiPlayer::clientSendReceivedClientID(sf::UdpSocket& socket)
+{
+	sf::Packet PreceivedID;
+	PreceivedID << casesForThem << clientID;
+	socket.send(PreceivedID, sender, port);
+}
+void MultiPlayer::clientSendReceivedNrOfPlayers(sf::UdpSocket& socket)
+{
+	sf::Packet PnrOfPlayers;
+	PnrOfPlayers << casesForThem << clientID << currentNrPlayers;
+		socket.send(PnrOfPlayers, sender, port);
 
-
-
-
+}
 void MultiPlayer::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
+	
 	target.draw(box, states);
 	for(auto &i :verticalWalls)
 	{
@@ -836,10 +1090,23 @@ void MultiPlayer::draw(sf::RenderTarget& target, sf::RenderStates states) const
 		target.draw(i);
 	}
 
-	target.draw(player1);
+	//target.draw(player1);
 
+	if (isServer) {
+		player1.drawEverything(target, states, clients.size());
+	}
+		//player1.drawAll(target, states, clients.size());
 
-	
+	if (isClient) {
+		//player1.drawEverything(target, states, currentNrPlayers);
+		player1.drawEverything(target, states, currentNrPlayers);
+
+		std::cout << "current nr of players "<<currentNrPlayers << std::endl;
+
+	}
+
+	//target.draw(player1.Players[clientID].Tank);
+
 	/*
 	if (isClient) {
 	

@@ -18,7 +18,7 @@ private:
 
 	Map map;
 	Score score;
-	t players;
+	Player players;
 
 public:
 	void setup(sf::RenderWindow& window);
@@ -28,10 +28,8 @@ public:
 	SinglePlayer()
 	{
 		font.loadFromFile("Fonts/crackman front.ttf");
-		buttonT.loadFromFile("Images/Button.png");
-	//	buttonT.setTexture(ResourceManagement::GetInstance()->RequestedTexture("GreenTank"));
-		//BK.setTexture(ResourceManagement::GetInstance()->RequestedTexture("Button"));
-		BK.setTexture(buttonT);
+		BK.setTexture(*ResourceManagement::GetInstance()->RequestedTexture("Button"));
+		
 	
 	}
 

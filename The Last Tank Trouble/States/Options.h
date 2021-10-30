@@ -36,7 +36,9 @@ public:
 		OPS.setSize(sf::Vector2f(OPS.getTextureRect().width, OPS.getTextureRect().height));
 
 
-		BK.setTexture(buttonT);
+		BK.setTexture(*ResourceManagement::GetInstance()->RequestedTexture("Button"));
+
+		
 		
 	
 	
