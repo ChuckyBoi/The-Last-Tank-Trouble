@@ -144,7 +144,7 @@ void MultiPlayer::listen()
 	while (true)
 	{
 		//std::cout << "before wait\n";
-		if (selector.wait(sf::milliseconds(10.f)))
+		if (selector.wait(sf::milliseconds(100.f)))
 		{
 			if (selector.isReady(client_))
 			{
