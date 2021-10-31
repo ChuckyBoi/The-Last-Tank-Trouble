@@ -46,6 +46,9 @@ private:
 
 	}Players[5];
 
+	sf::Clock clock;
+	float deltaTime;
+
 	bool canRestart = false;
 	sf::Music music;
 	sf::SoundBuffer bufferWall;
@@ -186,6 +189,6 @@ public:
 	
 
 
-
+	void CalculateDeltaTime();
 
 };

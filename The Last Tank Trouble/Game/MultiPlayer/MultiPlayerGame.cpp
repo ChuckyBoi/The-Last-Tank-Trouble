@@ -9,6 +9,8 @@ MultiPlayerGame::MultiPlayerGame()
 	Players[3].Tank.setTexture(ResourceManagement::GetInstance()->RequestedTexture("BlueTank"));
 	Players[4].Tank.setTexture(ResourceManagement::GetInstance()->RequestedTexture("YellowTank"));
 
+	deltaTime = clock.restart().asSeconds();
+
 	srand(time(NULL));
 
 	/*
@@ -94,7 +96,8 @@ void MultiPlayerGame::movePlayer(int pNumber)
 
 {
 
-	
+	const int pixelsToMovePerSec=100;
+	const float frameMovement = pixelsToMovePerSec * deltaTime;
 	//if (Players[pNumber].alive)
 	//{
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
@@ -114,11 +117,11 @@ void MultiPlayerGame::movePlayer(int pNumber)
 			Players[pNumber].Tank.move(-Players[pNumber].DFT.x, -Players[pNumber].DFT.y);
 		}
 
-		Players[pNumber].DFT = sf::Vector2f(cos(Players[pNumber].Tank.getRotation() * 3.14159265f / 180.f) *
-			Players[pNumber].speed, sin(Players[pNumber].Tank.getRotation() * 3.14159265f / 180.f) * Players[pNumber].speed);
+		Players[pNumber].DFT = sf::Vector2f(cos(Players[pNumber].Tank.getRotation() * 3.14159265f / 180.f) * frameMovement
+			, sin(Players[pNumber].Tank.getRotation() * 3.14159265f / 180.f) * frameMovement);
 
 		Players[pNumber].DFB = sf::Vector2f(cos(Players[pNumber].Tank.getRotation() * 3.14159265f / 180.f) *
-			Players[pNumber].bulletSpeed, sin(Players[pNumber].Tank.getRotation() * 3.14159265f / 180.f) * Players[pNumber].bulletSpeed);
+			frameMovement, sin(Players[pNumber].Tank.getRotation() * 3.14159265f / 180.f) * frameMovement);
 
 
 		Players[pNumber].ShootingHole = Players[pNumber].Tank.getTransform().transformPoint(Players[pNumber].Tank.getSize().x, Players[pNumber].Tank.getSize().y / 2);
@@ -145,6 +148,13 @@ float MultiPlayerGame::getRotation(int pNumber)
 {
 	return Players[pNumber].Tank.getRotation();
 }
+
+void MultiPlayerGame::CalculateDeltaTime()
+{
+	deltaTime = clock.restart().asSeconds();
+
+}
+
 void MultiPlayerGame::setRotation(int pNumber, float rotation_)
 {
 	Players[pNumber].Tank.setRotation(rotation_);
@@ -615,6 +625,7 @@ void MultiPlayerGame::draw(sf::RenderTarget& target, sf::RenderStates states)con
 
 void MultiPlayerGame::drawEverything(sf::RenderTarget& target, sf::RenderStates states,int nr) const
 {
+	
 
 	for (int numOfClient = 1; numOfClient <= nr; numOfClient++)
 	{

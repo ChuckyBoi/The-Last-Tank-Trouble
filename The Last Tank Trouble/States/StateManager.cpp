@@ -144,6 +144,7 @@ void StateManager::Compose(sf::RenderWindow& window)
 	if(multiPlayer.getActive())
 	{
 		window.draw(multiPlayer);
+
 	}
 }
 

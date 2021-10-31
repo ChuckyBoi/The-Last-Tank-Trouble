@@ -24,7 +24,7 @@ int main()
 		
 
 		sf::Event event;
-		while (window.pollEvent(event))
+		if (window.pollEvent(event))
 		{
 			manager.handleEvents(event, window);
 

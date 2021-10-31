@@ -1,6 +1,7 @@
 #pragma once
 #include "MultiPlayerGame.h"
 #include <thread>
+#include <mutex>
 
 
 class MultiPlayer :public sf::Drawable
@@ -15,8 +16,8 @@ private:
 	int clientID=1;
 
 
-	bool sentClientID = false;
-	bool sentNrOfPlayers = false;
+	sf::Vector2f SavedPosition;
+	float SavedRotation;
 	
 
 	sf::UdpSocket client_;
@@ -47,13 +48,19 @@ private:
 	unsigned short port;
 	unsigned short ClientsPort;
 
+	int packetsSent = 0;
 
+	int clientNumbering = 0;
 
+	int packet_counter = 0;
+	int packet_storage = 0;
 
+	sf::Clock Clock;
+	sf::Clock Packet_Clock;
+	sf::Time time;
 
-
-	
 	bool setupOnce = false;
+
 
 	bool isActive = false;
 
@@ -62,9 +69,12 @@ private:
 
 	bool isConnectedToServer = false;
 
-	bool sentMapsToAll = false;
-	
 
+	bool sentMapsToAll =false ;
+	bool sentClientID = false;
+	bool sentNrOfPlayers =  false ;
+
+	int nrPsent = 1;
 
 
 
@@ -103,6 +113,15 @@ private:
 	std::vector<sf::RectangleShape > vRights;
 	std::vector<sf::RectangleShape > vTops;
 	std::vector<sf::RectangleShape > vDowns;
+
+
+	std::mutex ServerMutexSend;
+	std::mutex ServerMutexReceive;
+	std::mutex ClienterverMutexSend;
+	std::mutex ClienterverMutexReceive;
+
+
+
 
 
 	std::thread t;
