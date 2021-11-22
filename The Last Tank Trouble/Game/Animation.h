@@ -7,6 +7,7 @@ class Animation : public sf::Drawable
 {
 public:
 
+	sf::Clock clock;
 	float frame, speed;
 	sf::Sprite sprite;
 	std::vector<sf::IntRect>frames;

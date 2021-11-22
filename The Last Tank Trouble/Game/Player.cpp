@@ -13,7 +13,9 @@ Player::Player()
 	Players[1].Tank.setTexture(ResourceManagement::GetInstance()->RequestedTexture("GreenTank"));
 	//Players[1].Tank.setTexture(&Players[1].texture);
 	//Players[1].set
-	
+//	Players[2].Tank.setTexture(ResourceManagement::GetInstance()->RequestedTexture("BlueTank"));
+	//Players[3].Tank.setTexture(ResourceManagement::GetInstance()->RequestedTexture("YellowTank"));
+
 
 	Players[0].circleForBulletCreation.setRadius(15);
 	Players[1].circleForBulletCreation.setRadius(15);
@@ -72,9 +74,9 @@ void Player::Update()
 		collideWithBullets();
 		explosion();
 		restartFromPlayers();
-	//	checkIfYouCanShoot();
-	//	intersectsWithIcon();
-		//createIcon();
+		checkIfYouCanShoot();
+		intersectsWithIcon();
+		createIcon();
 
 
 		
@@ -339,7 +341,7 @@ void Player::createBullets()
 		if (Players[0].alive && Players[1].alive)
 		{
 		
-			if (Players[0].shootTimer > 500 && sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && Players[0].bulletObjects.size() < 5 && Players[0].alive
+			if (Players[0].shootTimer > Players[0].speedOfShooting && sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && Players[0].bulletObjects.size() < Players[0].numOfBullets && Players[0].alive
 				&&Players[0].canShootH && Players[0].canShootV && Players[0].canShootB)
 			{
 
@@ -363,7 +365,7 @@ void Player::createBullets()
 					}
 				}
 			}
-			if (Players[1].shootTimer > 500 && sf::Keyboard::isKeyPressed(sf::Keyboard::P) && Players[1].bulletObjects.size() < 5 && Players[1].alive
+			if (Players[1].shootTimer > Players[1].speedOfShooting && sf::Keyboard::isKeyPressed(sf::Keyboard::P) && Players[1].bulletObjects.size() < Players[1].numOfBullets && Players[1].alive
 				&& Players[1].canShootH && Players[1].canShootV && Players[1].canShootB)
 			{
 				Players[1].bulletObj.setOrigin();
@@ -488,6 +490,7 @@ void Player::restartFromPlayers()
 				Players[0].explosionS.startAgain();
 				Players[0].alive = true;
 				canRestart = true;
+				restart();
 				//setup(window);
 			}
 		}
@@ -498,6 +501,7 @@ void Player::restartFromPlayers()
 				Players[1].explosionS.startAgain();
 				Players[1].alive = true;
 				canRestart = true;
+				restart();
 				//setup(window);
 			}
 		}
@@ -550,7 +554,7 @@ void Player::setSpeed(int speed_, Tanks &Players_)
 }
 void Player::setDefaultSpeed(Tanks& Players_)
 {
-	Players_.speed = 3;
+	Players_.speed = Default_speed;
 }
 void Player::setBulletSpeed(int bulletSpeed_, Tanks& Players_)
 {
@@ -558,7 +562,7 @@ void Player::setBulletSpeed(int bulletSpeed_, Tanks& Players_)
 }
 void Player::setDefaultBulletSpeed(Tanks& Players_)
 {
-	Players_.bulletSpeed = 4;
+	Players_.bulletSpeed = Default_BulletSpeed;
 }
 void Player::IncreaseBulletSize(int size, Tanks& players)
 {
@@ -604,7 +608,7 @@ void Player::intersectsWithIcon()
 				}
 				else if (roles[i]->getTypeOfPower() == "bulletSizeIncrease")
 				{
-					IncreaseBulletSize(27, Players[0]);
+					IncreaseBulletSize(20, Players[0]);
 				}
 				roles[i]->setActive(false);
 			}
@@ -621,7 +625,7 @@ void Player::intersectsWithIcon()
 				}
 				else if (roles[i]->getTypeOfPower() == "bulletSizeIncrease")
 				{
-					IncreaseBulletSize(27, Players[1]);
+					IncreaseBulletSize(20, Players[1]);
 				}
 				roles[i]->setActive(false);
 			}

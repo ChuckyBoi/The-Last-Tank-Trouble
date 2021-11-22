@@ -5,15 +5,20 @@ ResourceManagement::ResourceManagement()
 	LoadTexture("D:/SFML PROGRAM/The Last Tank Trouble/The Last Tank Trouble/Images/type_C.png","explosion");
 
 	LoadTexture("D:/SFML PROGRAM/The Last Tank Trouble/The Last Tank Trouble/Images/RedTank.png", "RedTank");
+	LoadTexture("D:/SFML PROGRAM/The Last Tank Trouble/The Last Tank Trouble/Images/BlueTank.png", "BlueTank");
+	LoadTexture("D:/SFML PROGRAM/The Last Tank Trouble/The Last Tank Trouble/Images/YellowTank.png", "YellowTank");
+
 	LoadTexture("D:/SFML PROGRAM/The Last Tank Trouble/The Last Tank Trouble/Images/GreenTank.png", "GreenTank");
-	//LoadFromFile("Fonts/crackman front.ttf");
-	//music.openFromFile("Audio/generals.ogg");
+	
 	LoadTexture("D:/SFML PROGRAM/The Last Tank Trouble/The Last Tank Trouble/Images/Button.png","Button");
 	LoadTexture("D:/SFML PROGRAM/The Last Tank Trouble/The Last Tank Trouble/Images/MM.jpg","MM");
 	LoadTexture("D:/SFML PROGRAM/The Last Tank Trouble/The Last Tank Trouble/Images/MP1.jpg","MP");
 	LoadTexture("D:/SFML PROGRAM/The Last Tank Trouble/The Last Tank Trouble/Images/OP.jpg","OP");
 
+	//LoadTexture("D:/SFML PROGRAM/The Last Tank Trouble/The Last Tank Trouble/Fonts/crackman front.ttf", "crackman");
 
+
+	//music.openFromFile("Audio/generals.ogg");
 	//LoadSoundBuffer("Audio/ButtonPush.wav", "ButtonSound");
 }
 void ResourceManagement::LoadTexture(std::string path, std::string name)
@@ -22,6 +27,7 @@ void ResourceManagement::LoadTexture(std::string path, std::string name)
 	t->loadFromFile(path);
 
 	m_textures[name] = t;
+	
 }
 void ResourceManagement::LoadSoundBuffer(std::string path, std::string name)
 {
@@ -46,6 +52,7 @@ sf::Texture* ResourceManagement::RequestedTexture(std::string name)
 
 	return nullptr;
 }
+
 sf::SoundBuffer* ResourceManagement::RequestedSound(std::string name)
 {
 	if (m_BufferSounds[name]) return m_BufferSounds[name];

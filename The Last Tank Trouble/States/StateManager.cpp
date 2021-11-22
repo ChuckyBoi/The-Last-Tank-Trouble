@@ -8,8 +8,6 @@ void StateManager::setup(sf::RenderWindow& window)
 	multiPlayerMenu.setup(window);
 	singlePlayer.setup(window);
 	multiPlayer.setup(window);
-	
-	
 }
 
 void StateManager::handleEvents(const sf::Event& event, sf::RenderWindow& window)
@@ -40,6 +38,7 @@ void StateManager::handleEvents(const sf::Event& event, sf::RenderWindow& window
 			multiPlayerMenu.setActive();	
 		}
 	}
+
 	if (options.getActive())
 	{
 		options.handleEvents(event, window);
@@ -49,6 +48,7 @@ void StateManager::handleEvents(const sf::Event& event, sf::RenderWindow& window
 			options.setInactive();
 		}
 	}
+
 	if(multiPlayerMenu.getActive())
 	{
 		multiPlayerMenu.handleEvents(event, window);
@@ -58,10 +58,19 @@ void StateManager::handleEvents(const sf::Event& event, sf::RenderWindow& window
 			mainmenu.setActive();
 			multiPlayerMenu.setInactive();
 		}
+
+
+
+
 		if (multiPlayerMenu.serverbuttonWasPressed())
 		{
 			multiPlayer.setServerActive(true);
-			//multiPlayer.setClientActive(true);
+
+
+			multiPlayer.make_foo_func_thread();
+		
+			
+
 			multiPlayerMenu.setInactive();
 			multiPlayer.setActive();
 
@@ -69,7 +78,10 @@ void StateManager::handleEvents(const sf::Event& event, sf::RenderWindow& window
 		if (multiPlayerMenu.clientbuttonWasPressed())
 		{
 			multiPlayer.setClientActive(true);
-			//multiPlayer.setServerActive(true);
+
+			multiPlayer.make_c_func_thread();
+
+		
 			multiPlayerMenu.setInactive();
 			multiPlayer.setActive();
 		
@@ -130,6 +142,7 @@ void StateManager::Compose(sf::RenderWindow& window)
 	if(multiPlayer.getActive())
 	{
 		window.draw(multiPlayer);
+
 	}
 }
 

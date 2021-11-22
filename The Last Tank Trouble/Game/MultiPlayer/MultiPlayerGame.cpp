@@ -1,32 +1,111 @@
 #include "MultiPlayerGame.h"
 
-void MultiPlayerGame::setup(sf::RenderWindow& window)
+
+MultiPlayerGame::MultiPlayerGame()
 {
+
+	Players[1].Tank.setTexture(ResourceManagement::GetInstance()->RequestedTexture("RedTank"));
+	Players[2].Tank.setTexture(ResourceManagement::GetInstance()->RequestedTexture("GreenTank"));
+	Players[3].Tank.setTexture(ResourceManagement::GetInstance()->RequestedTexture("BlueTank"));
+	Players[4].Tank.setTexture(ResourceManagement::GetInstance()->RequestedTexture("YellowTank"));
+
+	deltaTime = clock.restart().asSeconds();
+
+	srand(time(NULL));
+
+	/*
+	Players[pNumber].circleForBulletCreation.setRadius(15);
+	Players[pNumber].circleForBulletCreation.setRadius(15);
+
+	Players[pNumber].circleForBulletCreation.setOrigin(Players[pNumber].circleForBulletCreation.getRadius(),
+		Players[pNumber].circleForBulletCreation.getRadius());
+
+	Players[pNumber].bulletObj.set_map(map);
+	Players[pNumber].bulletObj.setup(window);
+	Players[pNumber].bulletObjects.clear();
+
+	Players[pNumber].Tank.setOrigin(Players[pNumber].size.x / 2, Players[pNumber].size.y / 2);
+//	Players[pNumber].Tank.setRotation(random);
+	//Players[pNumber].Tank.setPosition(randPos);
+	*/
+
+}
+
+void MultiPlayerGame::setup(sf::RenderWindow& window,std::list<sf::UdpSocket*> clients)
+{
+
+
 	horizontalWalls = map.getHorizontalWalls();
 	verticalWalls = map.getVerticalWalls();
 	box = map.getBox();
-	for (int pNumber = 0; pNumber < 2; pNumber++)
-	{
-		Players[pNumber].bulletObj.set_map(map);
-		Players[pNumber].bulletObj.setup(window);
-		Players[pNumber].bulletObjects.clear();
-	}
-	Players[0].Tank.setOrigin(Players[0].size.x / 2, Players[0].size.y / 2);
-	Players[0].Tank.setPosition(box.getPosition().x + Players[0].Tank.getSize().x / 2, box.getPosition().y + box.getSize().y / 2);
-	Players[0].Tank.setRotation(0);
 
-	Players[1].Tank.setOrigin(Players[1].size.x / 2, Players[1].size.y / 2);
-	Players[1].Tank.setRotation(180);
-	Players[1].Tank.setPosition(box.getPosition().x + box.getSize().x - Players[1].Tank.getSize().x / 2, box.getPosition().y + box.getSize().y / 2);
+	currentNumberOfPlayers = clients.size();
+
+
+
+	for (int numOfClient = 1; numOfClient <= 4; numOfClient++)
+	{
+		Players[numOfClient].circleForBulletCreation.setRadius(15);
+		Players[numOfClient].circleForBulletCreation.setRadius(15);
+
+		Players[numOfClient].circleForBulletCreation.setOrigin(Players[numOfClient].circleForBulletCreation.getRadius(),
+			Players[numOfClient].circleForBulletCreation.getRadius());
+
+		Players[numOfClient].bulletObj.set_map(map);
+		Players[numOfClient].bulletObj.setup(window);
+		Players[numOfClient].bulletObjects.clear();
+
+		Players[numOfClient].Tank.setOrigin(Players[1].size.x / 2, Players[1].size.y / 2);
+		
+	}
+
 
 	score.setup(window);
-	roles.clear();
+	//roles.clear();
 }
-void MultiPlayerGame::movePlayer(int pNumber)
-
+void MultiPlayerGame::handleEvents(const sf::Event& event, sf::RenderWindow& window)
 {
-	if (Players[pNumber].alive)
-	{
+}
+void MultiPlayerGame::update(sf::RenderWindow& window)
+{
+}
+
+void MultiPlayerGame::setClientFirstPosition(sf::RectangleShape box,int pNumber)
+{
+	int random;
+	sf::Vector2f randPos;
+
+	std::random_device rd;
+	std::mt19937 generator(rd());
+	std::uniform_int_distribution<> rangex(box.getPosition().x, box.getPosition().x+box.getSize().x);
+	randPos.x= rangex(generator);  
+	std::uniform_int_distribution<> rangey(box.getPosition().y, box.getPosition().y + box.getSize().y);
+	randPos.y = rangey(generator);  // generates number in the range 1..6
+
+	std::cout << box.getSize().y << std::endl;
+	random = rand() % 360;
+
+	Players[pNumber].circleForBulletCreation.setRadius(15);
+	Players[pNumber].circleForBulletCreation.setRadius(15);
+
+	Players[pNumber].circleForBulletCreation.setOrigin(Players[pNumber].circleForBulletCreation.getRadius(),Players[pNumber].circleForBulletCreation.getRadius());
+
+	//Players[pNumber].bulletObj.set_map(map);
+	//Players[pNumber].bulletObj.setup(window);
+	//Players[pNumber].bulletObjects.clear();
+
+	Players[pNumber].Tank.setOrigin(Players[pNumber].size.x / 2, Players[pNumber].size.y / 2);
+	Players[pNumber].Tank.setRotation(random);
+	Players[pNumber].Tank.setPosition(randPos);
+}
+
+void MultiPlayerGame::movePlayer(int pNumber)
+{
+
+	const int pixelsToMovePerSec=100;
+	const float frameMovement = pixelsToMovePerSec * deltaTime;
+	//if (Players[pNumber].alive)
+	//{
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
 		{
 			Players[pNumber].Tank.rotate(-Players[pNumber].rotation);
@@ -44,28 +123,47 @@ void MultiPlayerGame::movePlayer(int pNumber)
 			Players[pNumber].Tank.move(-Players[pNumber].DFT.x, -Players[pNumber].DFT.y);
 		}
 
-		Players[pNumber].DFT = sf::Vector2f(cos(Players[pNumber].Tank.getRotation() * 3.14159265f / 180.f) *
-			Players[pNumber].speed, sin(Players[pNumber].Tank.getRotation() * 3.14159265f / 180.f) * Players[pNumber].speed);
+		Players[pNumber].DFT = sf::Vector2f(cos(Players[pNumber].Tank.getRotation() * 3.14159265f / 180.f) * frameMovement
+			, sin(Players[pNumber].Tank.getRotation() * 3.14159265f / 180.f) * frameMovement);
 
 		Players[pNumber].DFB = sf::Vector2f(cos(Players[pNumber].Tank.getRotation() * 3.14159265f / 180.f) *
-			Players[pNumber].bulletSpeed, sin(Players[pNumber].Tank.getRotation() * 3.14159265f / 180.f) * Players[pNumber].bulletSpeed);
+			frameMovement, sin(Players[pNumber].Tank.getRotation() * 3.14159265f / 180.f) * frameMovement);
 
 
 		Players[pNumber].ShootingHole = Players[pNumber].Tank.getTransform().transformPoint(Players[pNumber].Tank.getSize().x, Players[pNumber].Tank.getSize().y / 2);
 		Players[pNumber].circleForBulletCreation.setPosition(sf::Vector2f(Players[pNumber].ShootingHole.x, Players[pNumber].ShootingHole.y));
 
-	}
+	
+	//}
 }
 sf::Vector2f MultiPlayerGame::playerGetBulletPos(int pNumber)
 {
 	return  Players[pNumber].bulletObj.getShape().getPosition();
 }
-sf::Vector2f MultiPlayerGame::playerGetPosition(int pNumber)
+
+sf::Vector2f MultiPlayerGame::playerGetDir(int pNumber)
+{
+	return  Players[pNumber].bulletObj.getDirection();
+}
+
+sf::Uint16 MultiPlayerGame::playerGetPositionX(int pNumber)
 {
 	
-		return Players[pNumber].Tank.getPosition();
+		return Players[pNumber].Tank.getPosition().x;
 	
 }
+
+sf::Uint16 MultiPlayerGame::playerGetPositionY(int pNumber)
+{
+	return Players[pNumber].Tank.getPosition().y;
+}
+
+sf::Uint16 MultiPlayerGame::playerGetRotation(int pNumber)
+{
+	return Players[pNumber].Tank.getRotation();
+
+}
+
 void MultiPlayerGame::playerSetPosition(int pNumber, sf::Vector2f pos)
 {
 	Players[pNumber].Tank.setPosition(pos);
@@ -74,6 +172,13 @@ float MultiPlayerGame::getRotation(int pNumber)
 {
 	return Players[pNumber].Tank.getRotation();
 }
+
+void MultiPlayerGame::CalculateDeltaTime()
+{
+	deltaTime = clock.restart().asSeconds();
+
+}
+
 void MultiPlayerGame::setRotation(int pNumber, float rotation_)
 {
 	Players[pNumber].Tank.setRotation(rotation_);
@@ -82,12 +187,8 @@ void MultiPlayerGame::set_map(Map map)
 {
 	this->map = map;
 }
-void MultiPlayerGame::handleEvents(const sf::Event& event, sf::RenderWindow& window)
-{
-}
-void MultiPlayerGame::update(sf::RenderWindow& window)
-{
-}
+
+
 void MultiPlayerGame::collideWithWalls(int pNumber, std::vector <sf::RectangleShape> verticalWalls, std::vector <sf::RectangleShape> horizontalWalls)
 {
 		for (size_t i = 0; i < horizontalWalls.size(); i++)
@@ -263,11 +364,10 @@ void MultiPlayerGame::collideWithBox(int pNumber, sf::RectangleShape box)
 		}
 	
 }
-
-void MultiPlayerGame::createBullets(int pNumber,
-	sf::RectangleShape box,
+void MultiPlayerGame::createBullets(int pNumber,sf::RectangleShape box,
 	std::vector<sf::RectangleShape> horizontalWalls,
 	std::vector<sf::RectangleShape> verticalWalls,
+
 	std::vector<sf::RectangleShape > hLefts,
 	std::vector<sf::RectangleShape > hRights,
 	std::vector<sf::RectangleShape > hTops,
@@ -281,7 +381,7 @@ void MultiPlayerGame::createBullets(int pNumber,
 
 	Players[pNumber].shootTimer = Players[pNumber].clock.getElapsedTime().asMilliseconds();
 
-	if (Players[pNumber].alive && Players[1].alive)
+	if (Players[pNumber].alive)
 	{
 
 		if (Players[pNumber].shootTimer > 500 && sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && Players[pNumber].bulletObjects.size() < 5 && Players[pNumber].alive
@@ -298,29 +398,22 @@ void MultiPlayerGame::createBullets(int pNumber,
 
 		
 
-			bulletCreatedPos = Players[pNumber].ShootingHole;
-			bulletCreatedDir = Players[pNumber].DFB;
-		}
-		
-		if (Players[pNumber].bulletObjects.size() > 0)
-		{
-			for (size_t i = 0; i < Players[pNumber].bulletObjects.size(); i++)
-			{
-				
-				Players[pNumber].bulletObjects[i].bulletMovement();
-				Players[pNumber].bulletObjects[i].multiPlayerCollisionWithWalls(horizontalWalls, verticalWalls, hLefts, hRights, hTops, hDowns, vLefts, vRights, vTops, vDowns);
-				Players[pNumber].bulletObjects[i].multiPlayerCollisionWithBox(box);
-				if (Players[pNumber].bulletObjects[i].getTime() > 10)
-				{
-					Players[pNumber].bulletObjects.erase(Players[pNumber].bulletObjects.begin() + i);
-				}
-			}
+			bulletCreatedPos[pNumber] = Players[pNumber].ShootingHole;
+			bulletCreatedDir[pNumber] = Players[pNumber].DFB;
 		}
 	}
 	
 }
 
-void MultiPlayerGame::moveBullet(int pNumber, sf::RectangleShape box, std::vector<sf::RectangleShape> horizontalWalls, std::vector<sf::RectangleShape> verticalWalls, std::vector<sf::RectangleShape> hLefts, std::vector<sf::RectangleShape> hRights, std::vector<sf::RectangleShape> hTops, std::vector<sf::RectangleShape> hDowns, std::vector<sf::RectangleShape> vLefts, std::vector<sf::RectangleShape> vRights, std::vector<sf::RectangleShape> vTops, std::vector<sf::RectangleShape> vDowns)
+
+
+
+
+
+void MultiPlayerGame::moveBullet(int pNumber, sf::RectangleShape box, std::vector<sf::RectangleShape> horizontalWalls, 
+	std::vector<sf::RectangleShape> verticalWalls, std::vector<sf::RectangleShape> hLefts, std::vector<sf::RectangleShape> hRights,
+	std::vector<sf::RectangleShape> hTops, std::vector<sf::RectangleShape> hDowns, std::vector<sf::RectangleShape> vLefts, 
+	std::vector<sf::RectangleShape> vRights, std::vector<sf::RectangleShape> vTops, std::vector<sf::RectangleShape> vDowns)
 {
 	if (Players[pNumber].bulletObjects.size() > 0)
 	{
@@ -333,15 +426,16 @@ void MultiPlayerGame::moveBullet(int pNumber, sf::RectangleShape box, std::vecto
 			{
 				Players[pNumber].bulletObjects.erase(Players[pNumber].bulletObjects.begin() + i);
 			}
+
+		
 		}
+	
 	}
 }
-
 bool MultiPlayerGame::getCanRestart()
 {
 	return canRestart;
 }
-
 void MultiPlayerGame::collisionWithBulletsForOtherPlayer(int pNumber)
 {
 	int theOtherOne = 0;
@@ -390,7 +484,6 @@ void MultiPlayerGame::collisionWithBulletsForOtherPlayer(int pNumber)
 		}
 	}
 }
-
 bool MultiPlayerGame::getIsAlive(int pNumber)
 {
 	return Players[pNumber].alive;
@@ -407,26 +500,14 @@ void MultiPlayerGame::createBulletsFor(int pNumber, sf::Vector2f bulletPos, sf::
 {
 	Players[pNumber].shootTimer = Players[pNumber].clock.getElapsedTime().asMilliseconds();
 
-	if (Players[pNumber].alive && Players[1].alive)
-	{
-
-		if (Players[pNumber].shootTimer > 500 && Players[pNumber].bulletObjects.size() < 5 && Players[pNumber].alive
-			&& Players[pNumber].canShootH && Players[pNumber].canShootV && Players[pNumber].canShootB)
-		{
-
 			Players[pNumber].bulletObj.setOrigin();
 			Players[pNumber].bulletObj.setPosition(bulletPos);//
 			Players[pNumber].bulletObj.setDirection(Dir);//
 			Players[pNumber].bulletObj.startTimer();
 			Players[pNumber].bulletObjects.push_back(Bullet(Players[pNumber].bulletObj));
 			Players[pNumber].clock.restart();
-		}
-	}
 
 }
-
-
-
 void MultiPlayerGame::collideWithBullets(int pNumber)
 {
 	int theOtherOne=0;
@@ -513,11 +594,9 @@ void MultiPlayerGame::restartFromPlayers(int pNumber)
 		}
 	}
 }
-
-
-
-void MultiPlayerGame::draw(sf::RenderTarget& target, sf::RenderStates states) const
+void MultiPlayerGame::draw(sf::RenderTarget& target, sf::RenderStates states)const
 {
+	/*
 	for (auto& i : roles)
 	{
 		if (i->getActive())
@@ -525,37 +604,46 @@ void MultiPlayerGame::draw(sf::RenderTarget& target, sf::RenderStates states) co
 			i->draw(target, states);
 		}
 	}
-	for (auto& i : Players[0].bulletObjects)
-	{
-		i.draw(target, states);
-	}
-	for (auto& i : Players[1].bulletObjects)
-	{
-		i.draw(target, states);
-	}
+	*/
+	for (int player = 1; player <= 4; player++) {
 
+		for (auto& i : Players[player].bulletObjects)
+		{
+			i.draw(target, states);
+		}
+
+	}
 	target.draw(score);
 
-	if (!Players[0].alive)
+	/*
+	for (int numOfClient = 1; numOfClient <= nr; numOfClient++)
 	{
-		target.draw(Players[0].explosionS);
-	}
-	else
-	{
-		target.draw(Players[0].Tank, states);
-	}
-	if (!Players[1].alive)
-	{
-		target.draw(Players[1].explosionS);
-	}
-	else
-	{
-		target.draw(Players[1].Tank, states);
-	}
+		target.draw(Players[numOfClient].Tank, states);
 
+		std::cout << "HEY" << nr << std::endl;
+	}
+	*/
 
 
 }
+
+void MultiPlayerGame::drawEverything(sf::RenderTarget& target, sf::RenderStates states,int nr) const
+{
+	
+
+	for (int numOfClient = 1; numOfClient <= nr; numOfClient++)
+	{
+		target.draw(Players[numOfClient].Tank, states);
+	}
+}
+
+void MultiPlayerGame::drawPlayer(sf::RenderTarget& target, sf::RenderStates states, int nr) const
+{
+
+	target.draw(Players[nr].Tank, states);
+}
+
+
 
 void MultiPlayerGame::setCantRestart()
 {

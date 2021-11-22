@@ -8,7 +8,7 @@ class MultiPlayerMenu :public Window
 {
 private:
 
-	bool isActive = true;
+	bool isActive = false;
 
 	sf::Font font;
 	Button BK{ font,"Soon...",sf::Vector2f(300,100) };
@@ -37,9 +37,11 @@ public:
 		MPS.setTexture(ResourceManagement::GetInstance()->RequestedTexture("MP"));
 		MPS.setSize(sf::Vector2f(MPS.getTextureRect().width, MPS.getTextureRect().height));
 
-		BK.setTexture(buttonT);
-		Server.setTexture(buttonT);
-		Client.setTexture(buttonT);
+		BK.setTexture(*ResourceManagement::GetInstance()->RequestedTexture("Button"));
+		Server.setTexture(*ResourceManagement::GetInstance()->RequestedTexture("Button"));
+		Client.setTexture(*ResourceManagement::GetInstance()->RequestedTexture("Button"));
+
+
 	}
 
 	bool getActive()

@@ -176,5 +176,8 @@
     <ClInclude Include="Game\MultiPlayer\MultiPlayerGame.h">
       <Filter>Header Files\Game\MultiPlayer</Filter>
     </ClInclude>
+    <ClInclude Include="Game\MultiPlayer\Server.h">
+      <Filter>Header Files\Game\MultiPlayer</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

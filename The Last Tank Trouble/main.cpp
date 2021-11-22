@@ -11,22 +11,22 @@ int main()
 	//sf::RenderWindow window(sf::VideoMode(1920, 1080), "Last Man Standing");
 	//window.setFramerateLimit(10);
     window.setVerticalSyncEnabled(true);
+	std::cout << "work goddamit " << std::endl;
 
-	//StateManager manager;
-	//manager.setup(window);
+	StateManager manager;
+	manager.setup(window);
 
-	std::cout << sf::IpAddress::getLocalAddress().toString();
-	
+	std::cout << "work goddamit " << std::endl;
 
 	while (window.isOpen())
 	{
-
-		std::cout << sf::IpAddress::getLocalAddress().toString();
+		
+		
 
 		sf::Event event;
 		while (window.pollEvent(event))
 		{
-		//	manager.handleEvents(event, window);
+			manager.handleEvents(event, window);
 
 			if (event.type == sf::Event::Closed)
 				window.close();
@@ -43,11 +43,11 @@ int main()
 		}
 		window.clear(sf::Color(220,220,220));
 		//window.clear(sf::Color::Black);
-		//window.clear(sf::Color::White);
+		window.clear(sf::Color::White);
 
 
-		//manager.update(window);
-		//manager.Compose(window);
+		manager.update(window);
+		manager.Compose(window);
 
 		window.display();
 	}
@@ -55,9 +55,7 @@ int main()
 }
 
 
-
 /*
-
 
 const unsigned short PORT = 5000;
 const std::string IPADDRESS("192.168.0.5");//change to suit your needs
@@ -149,7 +147,7 @@ int main()
 	}
 
 }
-*/
+
 //const unsigned short PORT = 5000;
 /*
 const std::string IPADDRESS("192.168.0.5");//change to suit your needs
