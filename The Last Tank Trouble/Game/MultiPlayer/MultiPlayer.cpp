@@ -746,7 +746,7 @@ void MultiPlayer::serverMovement(sf::UdpSocket& client, int &casesS)
 
 		//	std::cout << casesS << " " << i << " " << posx[i] << " " << posy[i] << std::endl;
 
-
+		
 		}
 		else 
 		{
