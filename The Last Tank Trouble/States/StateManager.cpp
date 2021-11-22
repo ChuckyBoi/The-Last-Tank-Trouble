@@ -71,8 +71,6 @@ void StateManager::handleEvents(const sf::Event& event, sf::RenderWindow& window
 		
 			
 
-
-
 			multiPlayerMenu.setInactive();
 			multiPlayer.setActive();
 
@@ -83,7 +81,7 @@ void StateManager::handleEvents(const sf::Event& event, sf::RenderWindow& window
 
 			multiPlayer.make_c_func_thread();
 
-			//multiPlayer.setServerActive(true);
+		
 			multiPlayerMenu.setInactive();
 			multiPlayer.setActive();
 		

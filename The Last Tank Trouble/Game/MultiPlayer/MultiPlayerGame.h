@@ -41,6 +41,7 @@ private:
 		bool alive = true;
 
 		Explosion explosionS;
+
 		Bullet bulletObj;
 		std::vector<Bullet>bulletObjects;
 
@@ -66,8 +67,8 @@ private:
 	std::vector<sf::RectangleShape > horizontalWalls;
 	sf::RectangleShape box;
 
-	sf::Vector2f bulletCreatedPos;
-	sf::Vector2f bulletCreatedDir;
+	sf::Vector2f bulletCreatedPos[5];
+	sf::Vector2f bulletCreatedDir[5];
 
 	std::vector<sf::RectangleShape > hLefts;
 	std::vector<sf::RectangleShape > hRights;
@@ -136,13 +137,13 @@ public:
 	void restartFromPlayers(int pNumber);
 
 
-	sf::Vector2f getBulletStartingPos()
+	sf::Vector2f getBulletStartingPos(int pNumber)
 		{
-			return  bulletCreatedPos;
+			return  bulletCreatedPos[pNumber];
 		}
-	sf::Vector2f getBulletStartingDir()
+	sf::Vector2f getBulletStartingDir(int pNumber)
 		{
-			return  bulletCreatedDir;
+			return  bulletCreatedDir[pNumber];
 		}
 		
 	void setCantRestart();
@@ -179,7 +180,12 @@ public:
 
 
 	sf::Vector2f playerGetBulletPos(int pNumber);
-	sf::Vector2f playerGetPosition(int pNumber);
+	sf::Uint16 playerGetPositionX(int pNumber);
+	sf::Uint16 playerGetPositionY(int pNumber);
+	sf::Uint16	playerGetRotation(int pNumber);
+
+	sf::Vector2f playerGetDir(int pNumber);
+
 	void movePlayer(int pNumber);
 	void setRotation(int pNumber, float rotation_);
 	void playerSetPosition(int pNumber, sf::Vector2f pos);

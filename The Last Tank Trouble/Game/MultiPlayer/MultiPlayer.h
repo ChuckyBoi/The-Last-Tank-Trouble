@@ -9,15 +9,28 @@ class MultiPlayer :public sf::Drawable
 
 	
 private:
-	int cases = 1;
-	int casesForThem = 1;
+	
+
 	int nrMaxPlayers = 4;
 	int currentNrPlayers = 1;
 	int clientID=1;
 
+	int clientWhoShotTheBullet=0;
 
-	sf::Vector2f SavedPosition;
-	float SavedRotation;
+
+	sf::Uint16 SavedPositionSX[5];
+	sf::Uint16 SavedPositionSY[5];
+	sf::Uint16 SavedRotationS[5];
+
+	sf::Uint16 SavedPositionXC, SavedPositionYC, rotationCC;
+	//sf::Uint16 SavedPositionSX, SavedPositionSY, rotationSS;
+
+
+	//sf::Uint16 SavedPositionX[5], SavedPositionY[5], rotationC[5];
+	sf::Uint16 posx[5], posy[5], rotation[5];
+	
+
+
 	
 
 	sf::UdpSocket client_;
@@ -35,13 +48,10 @@ private:
 	
 	
 	sf::Vector2f bulletPos, bulletDir;
-	sf::Vector2f previousPos;
-	float previousRotation;
 
 
 
 	char buffer[1024];
-
 	std::size_t received = 0;
 	sf::IpAddress sender;
 
@@ -50,20 +60,18 @@ private:
 
 	int packetsSent = 0;
 
-	int clientNumbering = 0;
 
 	int packet_counter = 0;
 	int packet_storage = 0;
-
 	sf::Clock Clock;
 	sf::Clock Packet_Clock;
 	sf::Time time;
+
 
 	bool setupOnce = false;
 
 
 	bool isActive = false;
-
 	bool isServer = false;
 	bool isClient = false;
 
@@ -73,22 +81,16 @@ private:
 	bool sentMapsToAll =false ;
 	bool sentClientID = false;
 	bool sentNrOfPlayers =  false ;
+	bool bulletShot = false;
 
-	int nrPsent = 1;
-
-
-
-
+	
 
 	bool keyIsPressed = false;
 	bool SpaceIsPressed = false;
 
 
 	Map map;
-
 	MultiPlayerGame player1;
-
-
 
 	sf::RectangleShape horizontalWall;
 	sf::RectangleShape verticalWall;
@@ -121,9 +123,6 @@ private:
 	std::mutex ClienterverMutexReceive;
 
 
-
-
-
 	std::thread t;
 	std::thread c;
 
@@ -143,6 +142,8 @@ public:
 	void make_c_func_thread();
 
 
+
+
 	void make_sending(sf::UdpSocket& client);
 	void make_receiving(sf::UdpSocket& client);
 
@@ -156,15 +157,18 @@ public:
 	 void update(sf::RenderWindow& window);
 
 	 //SERVER
-	 void sendMapAttributes(sf::UdpSocket& client);
+	 void sendMapAttributes(sf::UdpSocket& client, int &x);
 
-	 void sendCases(sf::UdpSocket& client);
-	void serverReceive(sf::UdpSocket& client);
+	 void sendCases(sf::UdpSocket& client,int &x);
 
-	 void serverMovement(sf::UdpSocket& client);
-	void  ServerSendBulletLoc(sf::UdpSocket& client);
-	void serverSendNrOfClients(sf::UdpSocket& client);
-	void ServerSendClientID(sf::UdpSocket& client);
+	void serverReceive(sf::UdpSocket& client,int &x);
+
+	 void serverMovement(sf::UdpSocket& client, int &x);
+	void  ServerSendBulletLoc(sf::UdpSocket& client, int& x);
+	void serverSendNrOfClients(sf::UdpSocket& client, int &x);
+	void ServerSendClientID(sf::UdpSocket& client, int &x);
+
+	void ServerSendStandBy(sf::UdpSocket& client, int& x);
 
 	int getClientsSize();
 	
@@ -173,18 +177,20 @@ public:
 
 
 	 //CLIENT
-	void clientReceiveClientID(sf::UdpSocket& client);
+	void clientReceiveClientID(sf::UdpSocket& client,int &x);
 
-	 void clientSend(sf::UdpSocket& socket);
-	 void clientReceive(sf::UdpSocket& socket);
+	 void clientSend(sf::UdpSocket& socket, int &x);
+	 void clientReceive(sf::UdpSocket& socket,int &x);
 
-	 void clientMovement(sf::UdpSocket& socket);
-	 void ClientSendBulletLoc(sf::UdpSocket& socket);
-	 void clientSendCanReset(sf::UdpSocket& socket);
-	 void clientSendReceivedClientID(sf::UdpSocket& socket);
-	 void clientSendReceivedNrOfPlayers(sf::UdpSocket& socket);
+	 void clientMovement(sf::UdpSocket& socket, int x);
+	 void ClientSendBulletLoc(sf::UdpSocket& socket, int x);
+	 void clientSendCanReset(sf::UdpSocket& socket, int x);
+	 void clientSendReceivedClientID(sf::UdpSocket& socket, int x);
+	 void clientSendReceivedNrOfPlayers(sf::UdpSocket& socket, int x);
+
+	 void clientSendStandBy(sf::UdpSocket& socket, int x);
+
 	 
-	
 	
 	
 

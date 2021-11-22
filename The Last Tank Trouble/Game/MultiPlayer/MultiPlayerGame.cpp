@@ -63,6 +63,13 @@ void MultiPlayerGame::setup(sf::RenderWindow& window,std::list<sf::UdpSocket*> c
 	score.setup(window);
 	//roles.clear();
 }
+void MultiPlayerGame::handleEvents(const sf::Event& event, sf::RenderWindow& window)
+{
+}
+void MultiPlayerGame::update(sf::RenderWindow& window)
+{
+}
+
 void MultiPlayerGame::setClientFirstPosition(sf::RectangleShape box,int pNumber)
 {
 	int random;
@@ -93,7 +100,6 @@ void MultiPlayerGame::setClientFirstPosition(sf::RectangleShape box,int pNumber)
 }
 
 void MultiPlayerGame::movePlayer(int pNumber)
-
 {
 
 	const int pixelsToMovePerSec=100;
@@ -134,12 +140,30 @@ sf::Vector2f MultiPlayerGame::playerGetBulletPos(int pNumber)
 {
 	return  Players[pNumber].bulletObj.getShape().getPosition();
 }
-sf::Vector2f MultiPlayerGame::playerGetPosition(int pNumber)
+
+sf::Vector2f MultiPlayerGame::playerGetDir(int pNumber)
+{
+	return  Players[pNumber].bulletObj.getDirection();
+}
+
+sf::Uint16 MultiPlayerGame::playerGetPositionX(int pNumber)
 {
 	
-		return Players[pNumber].Tank.getPosition();
+		return Players[pNumber].Tank.getPosition().x;
 	
 }
+
+sf::Uint16 MultiPlayerGame::playerGetPositionY(int pNumber)
+{
+	return Players[pNumber].Tank.getPosition().y;
+}
+
+sf::Uint16 MultiPlayerGame::playerGetRotation(int pNumber)
+{
+	return Players[pNumber].Tank.getRotation();
+
+}
+
 void MultiPlayerGame::playerSetPosition(int pNumber, sf::Vector2f pos)
 {
 	Players[pNumber].Tank.setPosition(pos);
@@ -163,12 +187,8 @@ void MultiPlayerGame::set_map(Map map)
 {
 	this->map = map;
 }
-void MultiPlayerGame::handleEvents(const sf::Event& event, sf::RenderWindow& window)
-{
-}
-void MultiPlayerGame::update(sf::RenderWindow& window)
-{
-}
+
+
 void MultiPlayerGame::collideWithWalls(int pNumber, std::vector <sf::RectangleShape> verticalWalls, std::vector <sf::RectangleShape> horizontalWalls)
 {
 		for (size_t i = 0; i < horizontalWalls.size(); i++)
@@ -344,10 +364,10 @@ void MultiPlayerGame::collideWithBox(int pNumber, sf::RectangleShape box)
 		}
 	
 }
-void MultiPlayerGame::createBullets(int pNumber,
-	sf::RectangleShape box,
+void MultiPlayerGame::createBullets(int pNumber,sf::RectangleShape box,
 	std::vector<sf::RectangleShape> horizontalWalls,
 	std::vector<sf::RectangleShape> verticalWalls,
+
 	std::vector<sf::RectangleShape > hLefts,
 	std::vector<sf::RectangleShape > hRights,
 	std::vector<sf::RectangleShape > hTops,
@@ -361,7 +381,7 @@ void MultiPlayerGame::createBullets(int pNumber,
 
 	Players[pNumber].shootTimer = Players[pNumber].clock.getElapsedTime().asMilliseconds();
 
-	if (Players[pNumber].alive && Players[1].alive)
+	if (Players[pNumber].alive)
 	{
 
 		if (Players[pNumber].shootTimer > 500 && sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && Players[pNumber].bulletObjects.size() < 5 && Players[pNumber].alive
@@ -378,27 +398,18 @@ void MultiPlayerGame::createBullets(int pNumber,
 
 		
 
-			bulletCreatedPos = Players[pNumber].ShootingHole;
-			bulletCreatedDir = Players[pNumber].DFB;
-		}
-		
-		if (Players[pNumber].bulletObjects.size() > 0)
-		{
-			for (size_t i = 0; i < Players[pNumber].bulletObjects.size(); i++)
-			{
-				
-				Players[pNumber].bulletObjects[i].bulletMovement();
-				Players[pNumber].bulletObjects[i].multiPlayerCollisionWithWalls(horizontalWalls, verticalWalls, hLefts, hRights, hTops, hDowns, vLefts, vRights, vTops, vDowns);
-				Players[pNumber].bulletObjects[i].multiPlayerCollisionWithBox(box);
-				if (Players[pNumber].bulletObjects[i].getTime() > 10)
-				{
-					Players[pNumber].bulletObjects.erase(Players[pNumber].bulletObjects.begin() + i);
-				}
-			}
+			bulletCreatedPos[pNumber] = Players[pNumber].ShootingHole;
+			bulletCreatedDir[pNumber] = Players[pNumber].DFB;
 		}
 	}
 	
 }
+
+
+
+
+
+
 void MultiPlayerGame::moveBullet(int pNumber, sf::RectangleShape box, std::vector<sf::RectangleShape> horizontalWalls, 
 	std::vector<sf::RectangleShape> verticalWalls, std::vector<sf::RectangleShape> hLefts, std::vector<sf::RectangleShape> hRights,
 	std::vector<sf::RectangleShape> hTops, std::vector<sf::RectangleShape> hDowns, std::vector<sf::RectangleShape> vLefts, 
@@ -415,7 +426,10 @@ void MultiPlayerGame::moveBullet(int pNumber, sf::RectangleShape box, std::vecto
 			{
 				Players[pNumber].bulletObjects.erase(Players[pNumber].bulletObjects.begin() + i);
 			}
+
+		
 		}
+	
 	}
 }
 bool MultiPlayerGame::getCanRestart()
@@ -486,21 +500,12 @@ void MultiPlayerGame::createBulletsFor(int pNumber, sf::Vector2f bulletPos, sf::
 {
 	Players[pNumber].shootTimer = Players[pNumber].clock.getElapsedTime().asMilliseconds();
 
-	if (Players[pNumber].alive && Players[1].alive)
-	{
-
-		if (Players[pNumber].shootTimer > 500 && Players[pNumber].bulletObjects.size() < 5 && Players[pNumber].alive
-			&& Players[pNumber].canShootH && Players[pNumber].canShootV && Players[pNumber].canShootB)
-		{
-
 			Players[pNumber].bulletObj.setOrigin();
 			Players[pNumber].bulletObj.setPosition(bulletPos);//
 			Players[pNumber].bulletObj.setDirection(Dir);//
 			Players[pNumber].bulletObj.startTimer();
 			Players[pNumber].bulletObjects.push_back(Bullet(Players[pNumber].bulletObj));
 			Players[pNumber].clock.restart();
-		}
-	}
 
 }
 void MultiPlayerGame::collideWithBullets(int pNumber)
@@ -600,15 +605,14 @@ void MultiPlayerGame::draw(sf::RenderTarget& target, sf::RenderStates states)con
 		}
 	}
 	*/
-	for (auto& i : Players[0].bulletObjects)
-	{
-		i.draw(target, states);
-	}
-	for (auto& i : Players[1].bulletObjects)
-	{
-		i.draw(target, states);
-	}
+	for (int player = 1; player <= 4; player++) {
 
+		for (auto& i : Players[player].bulletObjects)
+		{
+			i.draw(target, states);
+		}
+
+	}
 	target.draw(score);
 
 	/*

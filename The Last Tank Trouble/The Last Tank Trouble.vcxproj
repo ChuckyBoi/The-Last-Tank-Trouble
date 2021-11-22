@@ -158,6 +158,7 @@
     <ClInclude Include="Game\Map.h" />
     <ClInclude Include="Game\MultiPlayer\MultiPlayer.h" />
     <ClInclude Include="Game\MultiPlayer\MultiPlayerGame.h" />
+    <ClInclude Include="Game\MultiPlayer\Server.h" />
     <ClInclude Include="Game\Player.h" />
     <ClInclude Include="Game\PowerUps\BulletSizeIncrease.h" />
     <ClInclude Include="Game\PowerUps\BulletSpeedPowerUp.h" />

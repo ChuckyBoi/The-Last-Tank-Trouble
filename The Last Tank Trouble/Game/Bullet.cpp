@@ -47,6 +47,10 @@ void Bullet::setDirection(sf::Vector2f dir)
 {
 	Direction = dir;
 }
+sf::Vector2f Bullet::getDirection()
+{
+	return Direction;
+}
 void Bullet::startTimer()
 {
 	clock.restart();
@@ -72,7 +76,6 @@ void Bullet::collisionWithWalls()
 			{
 				Direction.y *= -1;
 				//std::cout << "top" << std::endl;
-
 			}
 			
 		}

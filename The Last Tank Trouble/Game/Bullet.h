@@ -52,6 +52,10 @@ public:
 
 	void setPosition(sf::Vector2f pos);
 	void setDirection(sf::Vector2f dir);
+
+	sf::Vector2f getDirection();
+
+
 	void startTimer();
 	int getTime();
 	void bulletMovement();
