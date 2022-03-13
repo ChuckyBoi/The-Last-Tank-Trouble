@@ -11,18 +11,20 @@ int main()
 	//sf::RenderWindow window(sf::VideoMode(1920, 1080), "Last Man Standing");
 	//window.setFramerateLimit(10);
     window.setVerticalSyncEnabled(true);
-	std::cout << "work goddamit " << std::endl;
+	
 
 	StateManager manager;
 	manager.setup(window);
 
-	std::cout << "work goddamit " << std::endl;
+
+	std::cout << sf::IpAddress::getPublicAddress() << std::endl;
+	std::cout << sf::IpAddress::getLocalAddress() << std::endl;
+
 
 	while (window.isOpen())
 	{
 		
 		
-
 		sf::Event event;
 		while (window.pollEvent(event))
 		{

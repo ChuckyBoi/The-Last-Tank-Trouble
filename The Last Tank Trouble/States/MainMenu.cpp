@@ -36,8 +36,7 @@ void MainMenu::update(sf::RenderWindow& window)
 }
 void MainMenu::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-	
-	
+
 
 	target.draw(MMS);
 	target.draw(SP);
