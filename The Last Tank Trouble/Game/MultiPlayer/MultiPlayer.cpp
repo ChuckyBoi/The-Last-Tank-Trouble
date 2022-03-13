@@ -133,10 +133,10 @@ void MultiPlayer::listen()
 
 
 	int casesS;
-
+	//client_.bind(55002);
 	if(client_.bind(55002) == sf::Socket::Done)
 	{
-		std::cout << "Server IS BIND  " << port << ", waiting for a connection... " << std::endl;
+		//std::cout << "Server IS BIND  " << port << ", waiting for a connection... " << std::endl;
 	}
 
 	selector.add(client_);
@@ -181,7 +181,7 @@ void MultiPlayer::listen()
 				sendCases(*client, casesS);
 				//serverReceive(*client,casesS);
 				clientID++;
-				casesS = 1;
+				//casesS = 1;
 						
 					
 						clients.push_back(client);
@@ -238,8 +238,12 @@ void MultiPlayer::listen()
 								if (bulletShot) 
 								{
 									casesS = 3;
-									bulletShot = false;
+									//bulletShot = false;
+								
 								}
+							
+								if(bulletShot)
+									std::cout << "sent to client" << std::endl;
 
 								sendCases(client, casesS);
 								serverReceive(client,casesS);
@@ -252,6 +256,10 @@ void MultiPlayer::listen()
 						if (!sentMapsToAll)
 						{
 							sentMapsToAll = true;
+						}
+						if (bulletShot)
+						{
+							bulletShot = false;
 						}
 						
 					
@@ -268,11 +276,11 @@ void MultiPlayer::client()
 
 	if (!isConnectedToServer)
 	{
-		std::cout << "Your port:?" << std::endl;
+	    std::cout << "Your port:?" << std::endl;
 		std::cin >> ClientsPort;
 
 		// Send a message to 192.168.1.50 on port 55002
-
+		//socket_.bind(55001);
 		socket_.send("9", sizeof(buffer), "192.168.0.120", 55002);
 
 		// Receive an answer (most likely from 192.168.1.50, but could be anyone else)
@@ -292,19 +300,13 @@ void MultiPlayer::client()
 	}
 	if (isConnectedToServer == true)
 	{
-		sf::SocketSelector selector;
-		selector.add(socket_);
+	
 
 		while (true)
 		{
 
 			Packet_Clock.getElapsedTime().asSeconds();
-			if (selector.wait(sf::microseconds(100.f)))
-			{
-
-
-				if (selector.isReady(socket_))
-				{
+		
 
 					if (Packet_Clock.getElapsedTime().asSeconds() >= 1)
 					{
@@ -327,8 +329,7 @@ void MultiPlayer::client()
 						clientSend(socket_, casesC);
 					}
 				}
-			}
-		}
+
 	}
 }
 
@@ -379,9 +380,8 @@ void MultiPlayer::handleEvents(const sf::Event& event, sf::RenderWindow& window)
 			if (player1.getPlayersBulletSize(clientID) < 5 && player1.getShootingTimer(clientID) > 500)
 			{
 
-		
+
 				bulletShot = true;
-			
 
 			}
 		}
@@ -391,7 +391,8 @@ void MultiPlayer::handleEvents(const sf::Event& event, sf::RenderWindow& window)
 
 }
 void MultiPlayer::server()
-{//listen();
+{
+
 }
 void MultiPlayer::update(sf::RenderWindow& window)
 {
@@ -540,18 +541,20 @@ void MultiPlayer::serverReceive(sf::UdpSocket& client, int &casesS)
 	
 		packetReceived >> posx >> posy >> dirx >> diry;
 
-
 		bulletPos.x = posx;
 		bulletPos.y = posy;
 		bulletDir.x = dirx;
 		bulletDir.y = diry;
 
-		std::cout << "bullet pos sever " << clientID_ << " " << posx << " " << posy << " " << dirx << " " << diry << " " << std::endl;
+		std::cout << "Bullet position received from client number" << clientID_ << " " << posx << " " << posy << " " << dirx << " " << diry << " " << std::endl;
 
 		player1.createBulletsFor(clientID_, bulletPos, bulletDir);
-		clientWhoShotTheBullet = clientID_;
 
+
+
+		clientWhoShotTheBullet = clientID_;
 		bulletShot = true;
+
 		break;
 	case 4:
 		
@@ -564,7 +567,6 @@ void MultiPlayer::serverReceive(sf::UdpSocket& client, int &casesS)
 	}
 
 	packetReceived.clear();
-	//pls work
 	ServerMutexReceive.unlock();
 
 }
@@ -778,7 +780,6 @@ void MultiPlayer::ServerSendBulletLoc(sf::UdpSocket& client, int &casesS)
 	sf::Uint16 posx=0, posy=0;
 	float Dirx=0, Diry=0;
 
-	
 
 	for (int i = 1; i <= clients.size(); i++) 
 	{
@@ -794,6 +795,9 @@ void MultiPlayer::ServerSendBulletLoc(sf::UdpSocket& client, int &casesS)
 
 		Plocation << casesS << i << posx << posy << Dirx << Diry;
 		std::cout << "Server is sending for client " << i <<" " << posx << " " << posy <<" " << Dirx << " " << Diry << std::endl;
+
+
+		
 	}
 
 	client.send(Plocation, sender, port);
@@ -822,9 +826,8 @@ void MultiPlayer::clientReceive(sf::UdpSocket& socket,int &casesC)
 	
 	ClienterverMutexReceive.lock();
 
+
 	sf::Packet packetReceived;
-
-
 	if (socket.receive(packetReceived, sender, port) != sf::Socket::Done)
 	{
 		std::cout << "CLIENT RECEIVE: Couldn't receive data from server.\n";
@@ -834,6 +837,7 @@ void MultiPlayer::clientReceive(sf::UdpSocket& socket,int &casesC)
 	{
 		
 		packetReceived >> casesC;
+		//std::cout << "cases received for client is " << casesC << std::endl;
 		//std::cout << "cases C is" << casesC << std::endl;
 
 		switch (casesC)
@@ -841,10 +845,7 @@ void MultiPlayer::clientReceive(sf::UdpSocket& socket,int &casesC)
 		case 0:
 		
 			packetReceived >> clientID_>> posx>>posy;
-		
 			//std::cout << casesC << " player " << clientID_ << "pos " << posx << " " << posy << std::endl;
-
-
 			casesC = 2;
 			break;
 		case 1:
@@ -1011,7 +1012,6 @@ void MultiPlayer::clientReceive(sf::UdpSocket& socket,int &casesC)
 		}
 		break;
 		case 2:
-
 			packetReceived >> clientID_ >> posx >> posy >> rotation;
 
 			if (clientID_ != clientID)
@@ -1022,9 +1022,8 @@ void MultiPlayer::clientReceive(sf::UdpSocket& socket,int &casesC)
 			break;
 		case 3:
 			
-
 			packetReceived >> clientID_ >> posx >> posy >> dirx >> diry;
-			std::cout << "client received from server " <<clientID_ << " " << posx << " " << posy << " " << dirx << " " << diry << std::endl;
+			std::cout << "client received from server from client number "  << clientID_ << " " << posx << " " << posy << " " << dirx << " " << diry << std::endl;
 
 			if (clientID_ != clientID)
 			{
@@ -1037,8 +1036,7 @@ void MultiPlayer::clientReceive(sf::UdpSocket& socket,int &casesC)
 				player1.createBulletsFor(clientID_, bulletPos, bulletDir);
 				std::cout << "should create " << std::endl;
 			}
-				casesC = 2;
-			
+
 			break;
 		case 4:
 			packetReceived >> clientID;
@@ -1064,7 +1062,6 @@ void MultiPlayer::clientSend(sf::UdpSocket& socket, int& casesC)
 		bulletShot = false;
 		casesC = 3;
 
-	
 	}
 
 	switch (casesC)
@@ -1146,7 +1143,7 @@ void MultiPlayer::ClientSendBulletLoc(sf::UdpSocket& socket, int casesC)
 	Diry = Dir.y;
 
 
-	std::cout << "bullet pos client" <<clientID << " " << posx << " " << posy << " " << Dirx << " " << Diry << std::endl;
+	std::cout << "Client number " <<clientID << " is sending" << " " << posx << " " << posy << " " << Dirx << " " << Diry << std::endl;
 
 	sf::Packet Plocation;
 	Plocation << casesC << clientID << posx << posy << Dirx << Diry;
